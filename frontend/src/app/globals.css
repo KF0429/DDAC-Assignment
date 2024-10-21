@@ -15,9 +15,52 @@
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 0.875rem;
+  text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  line-height: 1.2;
+}
+header {
+  display: block;
+  unicode-bidi: isolate;
+}
+ul {
+  display: block;
+  list-style: disc;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
+  unicode-bidi: isolate;
+}
+li {
+  text-align: -webkit-match-parent;
+  unicode-bidi: isolate;
+}
+form {
+  margin-top: 0em;
+  unicode-bidi: isolate;
+}
+div {
+  display: block;
+  unicode-bidi: isolate;
+}
+input {
+  text-rendering: auto;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  text-align: start;
+  appearance: auto;
+  -webkit-rtl-ordering: logical;
+  cursor: text;
+  background-color: field;
+  padding-block: 1px;
+  padding-inline: 2px;
 }
 
 @layer utilities {

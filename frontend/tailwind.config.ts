@@ -26,6 +26,7 @@ const config: Config = {
       spacing: {
         "focus-indicator": "3px",
       },
+      important: true,
     },
   },
   plugins: [],

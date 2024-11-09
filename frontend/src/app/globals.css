@@ -26,6 +26,30 @@ header {
   display: block;
   unicode-bidi: isolate;
 }
+footer {
+  display: block;
+  unicode-bidi: isolate;
+}
+.footerbox {
+  color: rgba(0, 0, 0, 0.65);
+  display: block;
+  list-style-type: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  text-decoration: none;
+}
+.footerpayment {
+  background-color: #fff;
+  border-radius: 0.125rem;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  height: 1.875rem;
+  margin-bottom: 0.5rem;
+  margin-right: 0.5rem;
+  overflow: hidden;
+  padding: 0.25rem;
+  width: 3.75rem;
+}
 ul {
   display: block;
   list-style: disc;
@@ -51,6 +75,18 @@ div {
 .important-width {
   width: 120px !important;
 }
+.pagefooter {
+  box-sizing: border-box;
+  padding: 0.3125rem;
+  width: 15.625rem;
+}
+.footertitle {
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  margin-top: 2.5rem;
+}
 input {
   text-rendering: auto;
   letter-spacing: normal;
@@ -65,6 +101,23 @@ input {
   background-color: field;
   padding-block: 1px;
   padding-inline: 2px;
+}
+.ease-sharp-motion-curve {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.shadow-hover {
+  --tw-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: var(--tw-shadow);
+}
+
+.shadow-active {
+  --tw-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: var(--tw-shadow);
+}
+
+.border-shopee-black9 {
+  border-color: rgba(0, 0, 0, 0.09);
 }
 
 @layer utilities {

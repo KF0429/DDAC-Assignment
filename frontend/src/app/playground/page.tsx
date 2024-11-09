@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Footer from "../Components/Footer";
 
 export default function ShopeeCloneCarousel() {
   const images = [
@@ -45,6 +46,7 @@ export default function ShopeeCloneCarousel() {
           </li>
         ))}
       </ul>
+      <Footer></Footer>
     </div>
   );
 }

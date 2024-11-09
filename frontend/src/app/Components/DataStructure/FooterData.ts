@@ -5,17 +5,17 @@ export interface FooterLink {
 }
 
 // Data for each section
-export const customerServiceItems: string[] = [
-  "Help Centre",
-  "How To Buy",
-  "Help To Sell",
-  "Shopee Pay",
-  "Shopee Coins",
-  "Shopee Guarantee",
-  "Shopee Free Shipping Program",
-  "Return & Refund",
-  "Contact Us",
-  "Scam Safety Tips",
+export const customerServiceItems: FooterLink[] = [
+  { text: "Help Centre" },
+  { text: "How To Buy" },
+  { text: "Help To Sell" },
+  { text: "Shopee Pay" },
+  { text: "Shopee Coins" },
+  { text: "Shopee Guarantee" },
+  { text: "Shopee Free Shipping Program" },
+  { text: "Return & Refund" },
+  { text: "Contact Us" },
+  { text: "Scam Safety Tips" },
 ];
 
 export const aboutShopeeItems: FooterLink[] = [

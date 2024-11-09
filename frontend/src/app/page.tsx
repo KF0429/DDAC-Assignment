@@ -141,8 +141,8 @@ export default function main() {
                 <div className="opacity-100 bg-white rounded-sm shadow-ssm mt-0 overflow-visible pt-[30px]">
                   <div>
                     {/**Banner Here */}
-                    <Banner></Banner>
-                    <Multiplebutton></Multiplebutton>
+                    <Banner />
+                    <Multiplebutton />
                   </div>
                 </div>
                 <div className="ml-auto mr-auto w-[1200px] opacity-100">

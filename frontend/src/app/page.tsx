@@ -5,7 +5,7 @@ import Footer from "./Components/Footer";
 import Header from "./Components/Header";
 import Multiplebutton from "./Components/Multiplebutton";
 import ProductCard from "./Components/ProductCard";
-import { mockProducts } from "./Components/DataStructure/ProductMock";
+import { mockProducts } from "./lib/ProductMock";
 
 export default function main() {
   const categories = [
@@ -222,6 +222,7 @@ export default function main() {
                                       className="box-border p-[.3125rem] w-[16.66667%]"
                                     >
                                       <ProductCard
+                                        id={product.id}
                                         imageUrl={product.imageUrl}
                                         title={product.title}
                                         price={product.price}

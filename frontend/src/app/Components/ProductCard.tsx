@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 interface ProductCardParam {
+  id: number;
   imageUrl: string;
   title: string;
   price: string;
@@ -10,6 +11,7 @@ interface ProductCardParam {
 }
 
 export default function ProductCard({
+  id,
   imageUrl,
   title,
   price,
@@ -24,7 +26,7 @@ export default function ProductCard({
                    border-solid border-shopee-black9"
           aria-hidden="true"
         >
-          <Link href={""} className="contents">
+          <Link href={`/product/${id}`} prefetch={true} className="contents">
             <div className="flex h-full cursor-pointer flex-col bg-white">
               <div className="relative z-0 w-full pt-[100%]">
                 <Image

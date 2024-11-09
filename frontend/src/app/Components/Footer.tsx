@@ -6,7 +6,7 @@ import {
   aboutShopeeItems,
   paymentLogos,
   logisticsLogos,
-} from "./DataStructure/FooterData"; // Adjust the path as needed
+} from "../lib/FooterData"; // Adjust the path as needed
 export default function Footer() {
   return (
     <div>

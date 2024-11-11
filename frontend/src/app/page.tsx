@@ -2,138 +2,17 @@
 import Banner from "./Components/Banner";
 import CategoryItem from "./Components/CategoryItem";
 import Footer from "./Components/Footer";
-import Header from "./Components/Header";
+import StickyHeader from "./Components/StickyHeader";
 import Multiplebutton from "./Components/Multiplebutton";
 import ProductCard from "./Components/ProductCard";
 import { mockProducts } from "./lib/ProductMock";
+import { categories } from "./lib/CategoryMock";
 
 export default function main() {
-  const categories = [
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/7ea3e07f2e6f57272c6641e4ce3f1632",
-      alt: "img",
-      description: "Mobile & Accessories",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/537b6270462a686b4e733a0813c3e4ad@resize_w320_nl.webp",
-      alt: "img",
-      description: "Women Clothes",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/30f3b8033f0eeafa09dfa266016e62a5@resize_w320_nl.webp",
-      alt: "img",
-      description: "Watches",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/59c2de7794065c2418dcf32dc3adc765@resize_w320_nl.webp",
-      alt: "img",
-      description: "Men Clothes",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/d9e864c5bcfa65c518457265193db103@resize_w320_nl.webp",
-      alt: "img",
-      description: "Health & Beauty",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/3f4c5c2134b758f4e9de6e7de839a843@resize_w320_nl.webp",
-      alt: "img",
-      description: "Home & Living",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/b453fdb439f647028a92bc138c2a588e@resize_w320_nl.webp",
-      alt: "img",
-      description: "Baby & Toys",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/ab588c674c86512429124f9bf0d0112a@resize_w320_nl.webp",
-      alt: "img",
-      description: "Home Appliances",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/52e34825491214323c486d96d9649a2c@resize_w320_nl.webp",
-      alt: "img",
-      description: "Groceries & Pets",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/656b20a51610605ed163d9a37349d50f@resize_w320_nl.webp",
-      alt: "img",
-      description: "Women`s Shoes",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/081a08b39f2468c85263194ab3287fee@resize_w320_nl.webp",
-      alt: "img",
-      description: "Automative",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/e08026a4ee4eb7087acb4bf5127b1018@resize_w320_nl.webp",
-      alt: "img",
-      description: "Fashion Accessories",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/a3637aaab755ca9bba43f63a9592638c@resize_w320_nl.webp",
-      alt: "img",
-      description: "Women`s Bags",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/9adf5814aab1a1c241ca9310a4e48186@resize_w320_nl.webp",
-      alt: "img",
-      description: "Computer & Accessories",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/8fe4e09f99f52db2fef12dabddf9aee0",
-      alt: "img",
-      description: "Men`s Bags & Wallets",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/f2cc889405538978bd8c7b4c2103671f",
-      alt: "img",
-      description: "Sports & Outdoor",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/bced2f5f9d62806e087e917540b0614f@resize_w320_nl.webp",
-      alt: "img",
-      description: "Muslim Fashion",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/fa97e6d0a367546a699768c947cdc48b@resize_w320_nl.webp",
-      alt: "img",
-      description: "Men Shoes",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/ff8fda5211492988ec6096aaa7e8b121",
-      alt: "img",
-      description: "Games,Books & Hobbies",
-    },
-    {
-      href: "",
-      src: "https://down-my.img.susercontent.com/file/d29f9032307651e49696a3c8b5b300fe@resize_w320_nl.webp",
-      alt: "img",
-      description: "Gaming & Console",
-    },
-  ];
   return (
     <div>
       <div className="flex flex-col min-h-screen relative">
-        <Header></Header>
+        <StickyHeader></StickyHeader>
         <div className="flex-1">
           <div>
             <div className="mt-[7.4375rem] transition-[margin-top] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]">

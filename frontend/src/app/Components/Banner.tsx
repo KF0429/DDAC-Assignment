@@ -64,7 +64,9 @@ export default function Banner() {
                   transition: "opacity 0.3s ease",
                   opacity: 1,
                 }}
-                className="bg-[rgb(0,0,0,0.18)] select-none cursor-pointer inline-flex text-xl justify-center leading-5 opacity-0 absolute text-center top-[50%] h-[3.75rem] w-[2.1875rem] -left-[10px] items-center shadow-arrow fill-[rgba(0,0,0,.87)]"
+                className="bg-[rgb(0,0,0,0.18)] select-none cursor-pointer inline-flex text-xl justify-center leading-5 
+                          opacity-0 absolute text-center top-[50%] h-[3.75rem] w-[2.1875rem] -left-[10px] items-center 
+                          shadow-arrow fill-[rgba(0,0,0,.87)]"
               >
                 <svg
                   enable-background="new 0 0 13 20"
@@ -84,7 +86,9 @@ export default function Banner() {
                   transition: "opacity 0.3s ease",
                   opacity: 1,
                 }}
-                className="bg-[rgb(0,0,0,0.18)] select-none cursor-pointer inline-flex text-xl justify-center leading-5 opacity-0 absolute text-center top-[50%] h-[3.75rem] w-[2.1875rem] -right-[10px] items-center shadow-arrow fill-[rgba(0,0,0,.87)]"
+                className="bg-[rgb(0,0,0,0.18)] select-none cursor-pointer inline-flex text-xl justify-center leading-5 
+                          opacity-0 absolute text-center top-[50%] h-[3.75rem] w-[2.1875rem] -right-[10px] items-center 
+                          shadow-arrow fill-[rgba(0,0,0,.87)]"
               >
                 <svg
                   enable-background="new 0 0 13 20"

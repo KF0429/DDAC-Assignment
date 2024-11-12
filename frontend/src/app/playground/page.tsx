@@ -46,7 +46,7 @@ export default function ShopeeCloneCarousel() {
           </li>
         ))}
       </ul>
-      <Footer></Footer>
+      <Footer />
     </div>
   );
 }

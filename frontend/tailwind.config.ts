@@ -27,6 +27,14 @@ const config: Config = {
         "focus-indicator": "3px",
       },
       important: true,
+      transitionTimingFunction: {
+        "custom-bezier": "cubic-bezier(.4,0,.2,1)",
+        "custom-bezier2": "cubic-bezier(0.4, 0, 0.6, 1)",
+      },
+      transitionProperty: {
+        "margin-top": "margin-top",
+        top: "top",
+      },
     },
   },
   plugins: [],

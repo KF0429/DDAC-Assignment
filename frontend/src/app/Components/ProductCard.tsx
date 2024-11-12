@@ -17,6 +17,10 @@ export default function ProductCard({
   price,
   rating,
 }: ProductCardParam) {
+  const handleClick = () => {
+    sessionStorage.setItem("productTitle", title);
+    sessionStorage.setItem("productImageUrl", imageUrl);
+  };
   return (
     <div>
       <div className="contents">
@@ -26,7 +30,12 @@ export default function ProductCard({
                    border-solid border-shopee-black9"
           aria-hidden="true"
         >
-          <Link href={`/product/${id}`} prefetch={true} className="contents">
+          <Link
+            href={`/product/${id}`}
+            onClick={handleClick}
+            prefetch={true}
+            className="contents"
+          >
             <div className="flex h-full cursor-pointer flex-col bg-white">
               <div className="relative z-0 w-full pt-[100%]">
                 <Image

@@ -12,7 +12,7 @@ export default function main() {
   return (
     <div>
       <div className="flex flex-col min-h-screen relative">
-        <StickyHeader></StickyHeader>
+        <StickyHeader />
         <div className="flex-1">
           <div>
             <div className="mt-[7.4375rem] transition-[margin-top] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]">

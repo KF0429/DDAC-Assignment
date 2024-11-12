@@ -116,9 +116,6 @@ input {
   box-shadow: var(--tw-shadow);
 }
 
-.border-shopee-black9 {
-  border-color: rgba(0, 0, 0, 0.09);
-}
 .custom-clamp {
   display: -webkit-box;
   -webkit-box-orient: vertical;

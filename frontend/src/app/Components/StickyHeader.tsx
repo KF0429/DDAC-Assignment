@@ -2,11 +2,22 @@ import Link from "next/link";
 import React from "react";
 import CartIcon from "./Header/CartIcon";
 import TopNav from "./Header/TopNav";
+import SearchBar from "./Header/SearchBar";
 
-export default function Header() {
+interface HeaderProps {
+  isFixed?: boolean;
+}
+
+export default function Header({ isFixed = true }: HeaderProps) {
+  const user = "ali";
   return (
     <div>
-      <header className="left-0 fixed right-0 top-0 translate-z-0 z-[100] bg-gradient-to-b from-[#f53d2d] to-[#f63] transition-transform duration-200 ease-[cubic-bezier(.4,0,.2,1)]">
+      <header
+        className={`left-0 right-0 top-0 translate-z-0 z-[100] bg-gradient-to-b from-[#f53d2d] to-[#f63] 
+      transition-transform duration-200 ease-[cubic-bezier(.4,0,.2,1)] ${
+        isFixed ? "fixed" : ""
+      }`}
+      >
         <div className="min-w-[1200px] bg-transparent h-[2.125rem] relative z-[400]">
           <TopNav />
         </div>
@@ -14,7 +25,7 @@ export default function Header() {
           <div className="min-w-[1200px] bg-transparent shadow-ssm box-border">
             <div className="max-w-[1200px] box-border flex h-[5.3125rem] justify-between py-4 px-2.5 ml-auto mr-auto">
               <Link
-                href={""}
+                href={"/"}
                 className="pr-10 relative -top-[.1875rem] box-border no-underline cursor-pointer"
               >
                 <div className="rounded-sm -m-[2px] p-[2px]">
@@ -28,46 +39,10 @@ export default function Header() {
                   </svg>
                 </div>
               </Link>
-              <div className="flex  flex-col justify-start relative w-[840px]">
-                <form
-                  action=""
-                  className="shadow-search w-full items-stretch bg-white rounded-sm box-border flex h-10 justify-between p-[.1875rem] focus:outline-none --focus-indicator-spacing: theme('spacing.focus-indicator');"
-                >
-                  <div className="flex flex-1">
-                    <div className="bg-white border-white box-border flex flex-1 p-[0.625rem] relative">
-                      <input
-                        type="text"
-                        className="items-center border-0 flex flex-1 m-0 outline-0 p-0 leading-[0]"
-                      />
-                    </div>
-                  </div>
-                  <button className="bg-[#fb5533] outline-0 overflow-visible relative text-white h-[34px] max-w-[190px] min-w-[60px] py-0 px-[15px] inline-flex text-ellipsis items-center border-0 shadow-ssm box-border cursor-pointer flex-col text-sm justify-center capitalize">
-                    <svg
-                      height="19"
-                      viewBox="0 0 19 19"
-                      width="19"
-                      className="inline-block h-[1em] w-[1em] fill-current relative overflow-hidden mx-auto my-0 text-white cursor-pointer text-sm capitalize"
-                    >
-                      <g fill-rule="evenodd" stroke="none" stroke-width="1">
-                        <g transform="translate(-1016 -32)">
-                          <g>
-                            <g transform="translate(405 21)">
-                              <g transform="translate(611 11)">
-                                <path d="m8 16c4.418278 0 8-3.581722 8-8s-3.581722-8-8-8-8 3.581722-8 8 3.581722 8 8 8zm0-2c-3.3137085 0-6-2.6862915-6-6s2.6862915-6 6-6 6 2.6862915 6 6-2.6862915 6-6 6z"></path>
-                                <path d="m12.2972351 13.7114222 4.9799555 4.919354c.3929077.3881263 1.0260608.3842503 1.4141871-.0086574.3881263-.3929076.3842503-1.0260607-.0086574-1.414187l-4.9799554-4.919354c-.3929077-.3881263-1.0260608-.3842503-1.4141871.0086573-.3881263.3929077-.3842503 1.0260608.0086573 1.4141871z"></path>
-                              </g>
-                            </g>
-                          </g>
-                        </g>
-                      </g>
-                    </svg>
-                  </button>
-                </form>
-              </div>
+              <SearchBar />
               <div className="items-center flex flex-1 justify-center mx-0 my-[10px] pb-[5px] box-border">
                 <div className="relative">
-                  {/**here */}
-                  <CartIcon cartCount={3} /> {/**3 is example data */}
+                  <CartIcon user={user} />
                 </div>
               </div>
             </div>

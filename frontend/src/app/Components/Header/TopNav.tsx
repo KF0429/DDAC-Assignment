@@ -41,7 +41,7 @@ export default function TopNav() {
             </div>
           </li>
           <Link
-            href={"/auth/register"}
+            href={"/register"}
             className="cursor-pointer text-current normal-case font-medium items-center flex text-[.8125rem] select-none justify-center py-0 px-2.5 relative no-underline list-none"
           >
             Sign Up

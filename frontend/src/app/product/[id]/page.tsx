@@ -18,6 +18,20 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     quantity: number;
   } | null>(null);
 
+  const [quantity, setQuantity] = useState(1);
+  const maxQuantity = product?.quantity || 0;
+
+  const handleDecrement = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+  const handleIncrement = () => {
+    if (quantity < maxQuantity) {
+      setQuantity(quantity + 1);
+    }
+  };
+
   useEffect(() => {
     const productId = parseInt(params.id);
     const productData = mockProducts.find((item) => item.id === productId);
@@ -159,13 +173,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                                       <div style={{ marginRight: "15px" }}>
                                         <div className="bg-white items-center flex text-[#757575]">
                                           <button
-                                            style={{
-                                              msTransitionTimingFunction:
-                                                " cubic-bezier(.4,0,.6,1)",
-                                            }}
+                                            onClick={handleDecrement}
                                             className="rounded-br-none rounded-tr-none items-center bg-transparent border border-[rgba(0,0,0,0.09)]
                                           rounded-sm fill-[rgba(0,0,0,.8)] cursor-pointer flex text-sm font-light h-8 justify-center tracking-normal leading-[1] outline-none
-                                          w-8 transition duration-100 normal-case"
+                                          w-8 transition duration-100 normal-case ease-sharp-motion-curve"
                                           >
                                             <svg
                                               enable-background="new 0 0 10 10"
@@ -178,26 +189,19 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                                             </svg>
                                           </button>
                                           <input
-                                            style={{
-                                              msTransitionTimingFunction:
-                                                " cubic-bezier(.4,0,.6,1)",
-                                            }}
                                             className="text-[#d0011b] border-l-0 border-r-0 box-border cursor-text text-base font-normal h-8 text-center w-[50px]
-                                            items-center bg-transparent border border-[rgba(0,0,0,0.09)] flex justify-center tracking-normal leading-[1] outline-none"
+                                            items-center bg-transparent border border-[rgba(0,0,0,0.09)] flex justify-center tracking-normal leading-[1] outline-none ease-sharp-motion-curve"
                                             type="text"
-                                            value={1}
+                                            value={quantity}
                                           />
                                           <span className="h-[1px] m-0 overflow-hidden absolute whitespace-nowrap w-[1px] z-[-1000] text-[#757575]">
-                                            Quantity 1
+                                            Quantity {quantity}
                                           </span>
                                           <button
-                                            style={{
-                                              msTransitionTimingFunction:
-                                                " cubic-bezier(.4,0,.6,1)",
-                                            }}
+                                            onClick={handleIncrement}
                                             className="rounded-br-none rounded-tr-none items-center bg-transparent border border-[rgba(0,0,0,0.09)]
                                           rounded-sm fill-[rgba(0,0,0,.8)] cursor-pointer flex text-sm font-light h-8 justify-center tracking-normal leading-[1] outline-none
-                                          w-8 transition duration-100 normal-case"
+                                          w-8 transition duration-100 normal-case ease-sharp-motion-curve"
                                           >
                                             <svg
                                               enable-background="new 0 0 10 10"

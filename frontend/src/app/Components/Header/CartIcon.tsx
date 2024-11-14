@@ -1,10 +1,12 @@
 import React from "react";
 import Link from "next/link";
+import { Cart } from "@/app/lib/CartData";
 interface CartIconProps {
-  cartCount: number;
+  user: string;
 }
 
-export default function CartIcon({ cartCount }: CartIconProps) {
+export default function CartIcon({ user }: CartIconProps) {
+  const cartCount = Cart.filter((item) => item.user === user).length;
   return (
     <div>
       <div className="px-[10px] py-0">

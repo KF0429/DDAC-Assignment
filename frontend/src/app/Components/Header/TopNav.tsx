@@ -1,5 +1,5 @@
-import React from "react";
-import Link from "next/link";
+import React from 'react';
+import Link from 'next/link';
 
 export default function TopNav() {
   return (
@@ -7,7 +7,7 @@ export default function TopNav() {
       <nav className="mr-auto ml-auto max-w-[1200px] text-white items-center flex">
         <div className="flex items-center">
           <Link
-            href=""
+            href="/buyer"
             className="text-white text-sm font-light outline-0 overflow-visible p-1 relative no-underline"
           >
             Seller Centre
@@ -20,7 +20,7 @@ export default function TopNav() {
               <div className="relative">
                 <div>
                   <Link
-                    href={""}
+                    href={''}
                     className="pointer-events-none text-current py-1.5 px-0 items-center flex no-underline cursor-pointer"
                   >
                     <svg
@@ -41,14 +41,14 @@ export default function TopNav() {
             </div>
           </li>
           <Link
-            href={"/register"}
+            href={'/register'}
             className="cursor-pointer text-current normal-case font-medium items-center flex text-[.8125rem] select-none justify-center py-0 px-2.5 relative no-underline list-none"
           >
             Sign Up
           </Link>
           <div className="border-r border-customhsla h-[.8125rem] list-none text-white"></div>
           <Link
-            href={""}
+            href={''}
             className="cursor-pointer text-current normal-case font-medium items-center flex text-[.8125rem] select-none justify-center py-0 px-2.5 relative no-underline list-none"
           >
             Login

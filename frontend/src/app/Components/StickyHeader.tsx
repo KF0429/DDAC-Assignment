@@ -41,9 +41,7 @@ export default function Header({ isFixed = true }: HeaderProps) {
               </Link>
               <SearchBar />
               <div className="items-center flex flex-1 justify-center mx-0 my-[10px] pb-[5px] box-border">
-                <div className="relative">
-                  <CartIcon user={user} />
-                </div>
+                <CartIcon user={user} />
               </div>
             </div>
           </div>

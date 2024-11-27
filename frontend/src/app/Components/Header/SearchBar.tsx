@@ -8,8 +8,8 @@ export default function SearchBar() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search/${encodeURIComponent(searchQuery.trim())}`);
+    if (searchQuery.trim() !== "") {
+      router.push(`/search/${encodeURIComponent(searchQuery)}`);
     }
   };
   return (

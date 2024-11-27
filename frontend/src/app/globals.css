@@ -103,6 +103,15 @@ input {
   padding-block: 1px;
   padding-inline: 2px;
 }
+button {
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-indent: 0px;
+  text-shadow: none;
+  text-align: center;
+  padding-block: 1px;
+  padding-inline: 6px;
+}
 .ease-sharp-motion-curve {
   transition-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
 }
@@ -133,6 +142,16 @@ h3 {
   margin-block-end: 1em;
   margin-inline-start: 0px;
   margin-inline-end: 0px;
+  unicode-bidi: isolate;
+}
+h1 {
+  display: block;
+  font-size: 2em;
+  margin-block-start: 0.67em;
+  margin-block-end: 0.67em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
   unicode-bidi: isolate;
 }
 @layer utilities {

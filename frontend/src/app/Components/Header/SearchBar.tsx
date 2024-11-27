@@ -48,7 +48,7 @@ export default function SearchBar() {
               width="19"
               className="inline-block h-[1em] w-[1em] fill-current relative text-white cursor-pointer text-sm capitalize"
             >
-              <g fill-rule="evenodd" stroke="none" stroke-width="1">
+              <g fillRule="evenodd" stroke="none" strokeWidth={1}>
                 <g transform="translate(-1016 -32)">
                   <g>
                     <g transform="translate(405 21)">

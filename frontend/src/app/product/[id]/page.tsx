@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Header from "@/app/Components/Header/Header";
 import { mockProducts } from "@/app/lib/ProductMock";
-import Footer from "@/app/Components/Footer";
 import Quantitycontrol from "@/app/Components/Product/Quantitycontrol";
 import ProductDescription from "@/app/Components/Product/ProductDescription";
 import ProductComment from "@/app/Components/Product/ProductComment";
@@ -13,6 +12,7 @@ import ProductImage from "@/app/Components/Product/ProductImage";
 import AditionalInfo from "@/app/Components/Product/AditionalInfo";
 import TitleandRating from "@/app/Components/Product/TitleandRating";
 import ProductPriceInfo from "@/app/Components/Product/ProductPriceInfo";
+import Image from "next/image";
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<{
@@ -26,6 +26,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   const [quantity, setQuantity] = useState(1);
   const maxQuantity = product?.quantity || 0;
+  const [showAlert, setShowAlert] = useState(false);
 
   const handleDecrement = () => {
     if (quantity > 1) {
@@ -36,6 +37,13 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     if (quantity < maxQuantity) {
       setQuantity(quantity + 1);
     }
+  };
+  const handleClick = () => {
+    //handle alert prompt
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 600);
   };
 
   useEffect(() => {
@@ -90,7 +98,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                             />
                           </div>
                           <div className="mt-[15px]">
-                            <ActionButton price={product.price} />
+                            <ActionButton
+                              price={product.price}
+                              buttonAction={handleClick}
+                            />
                           </div>
                           <div className="mt-[30px] border-t border-t-[rgba(0,0,0,0.05)]">
                             <AditionalInfo />
@@ -119,11 +130,33 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                   </div>
                 </div>
               </div>
-              <Footer />
             </div>
           </div>
         </div>
       </div>
+      {showAlert && (
+        <div role="alert">
+          <div className="items-center bottom-0 flex justify-center left-0 fixed right-0 top-0 z-[10000] transition-opacity duration-100 ease-in-out">
+            <div
+              className="bg-[rgba(0,0,0,.7)] rounded-sm text-white cursor-default inline-block text-[1.0625rem]
+        max-w-[25rem] min-w-[18.75rem] overflow-hidden py-10 px-5 text-center"
+            >
+              <div className="flex justify-center mb-[1.25rem]">
+                <div className="items-center bg-[#00bfa5] rounded-[50%] h-[60px] text-center w-[60px] flex justify-center">
+                  <Image
+                    height={30}
+                    width={30}
+                    src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/9057d6e718e722cde0e8.svg"
+                    alt="tick image"
+                    className="border-0 overflow-clip"
+                  />
+                </div>
+              </div>
+              <div>Item has been added to your shopping cart</div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

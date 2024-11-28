@@ -27,7 +27,8 @@ export default function ProductCard({
         <div
           className="h-full box-content border relative ease-sharp-motion-curve
                    border-solid border-[(rgba(0, 0, 0, 0.09))] duration-100
-                   hover:shadow-hover active:shadow-active hover:translate-y-[1px] active:translate-y-0"
+                   hover:shadow-hover active:shadow-active hover:translate-y-[1px] active:translate-y-0 box-content
+                   hover:z-[1] hover:border-[#ee4d2d]"
           aria-hidden="true"
         >
           <Link

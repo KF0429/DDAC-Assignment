@@ -16,6 +16,9 @@ const config: Config = {
       transform: {
         "translate-z-0": "translateZ(0)",
       },
+      overflowClipMargin: {
+        content: "content-box",
+      },
       boxShadow: {
         ssm: "0 1px 1px 0 rgba(0,0,0,.05)",
         arrow: "0 1px 8px 0 rgba(0,0,0,.09)",

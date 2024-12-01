@@ -79,7 +79,13 @@ export default function page() {
                         <div className="flex mt-[.625rem] relative"></div>
                       </div>
                     </div>
-                    <div className="items-start bg-white flex flex-1 flex-wrap pl-[1.875rem]"></div>
+                    <div className="items-start bg-white flex flex-1 flex-wrap pl-[1.875rem]">
+                      <div
+                        className="flex flex-none basis-2/4 overflow-hidden pb-[.625rem] pt-[.625rem] 
+                      select-none cursor-pointer items-center py-[.625rem] px-0"
+                      ></div>
+                      <div></div>
+                    </div>
                   </div>
                 </div>
               </div>

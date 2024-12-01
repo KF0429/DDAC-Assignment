@@ -1,11 +1,14 @@
 "use client";
 import React from "react";
 import TopNav from "../Components/Header/TopNav";
-import Footer from "../Components/Footer";
+import Footer from "../Components/General/Footer";
 import CartHeader from "../Components/ShoppingCart/CartHeader";
 import EmptyCart from "../Components/ShoppingCart/EmptyCart";
+import { Cart } from "../lib/Mock/CartData";
+import CartItem from "../Components/ShoppingCart/CartItem";
 
 export default function shopingCart() {
+  const isCartEmpty = Cart.length === 0;
   return (
     <div className="flex flex-col min-h-[100vh] relative">
       <header
@@ -23,12 +26,13 @@ export default function shopingCart() {
               <CartHeader />
               {/**container */}
               <div className="ml-auto mr-auto w-[1200px]">
-                <EmptyCart />
+                {isCartEmpty ? <EmptyCart /> : <CartItem cart={Cart} />}
               </div>
             </div>
           </div>
         </div>
       </div>
+      <div className="mt-10 mx-0 mb-[70px]"></div>
       <Footer />
     </div>
   );

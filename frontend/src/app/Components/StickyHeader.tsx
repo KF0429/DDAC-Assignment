@@ -9,7 +9,7 @@ interface HeaderProps {
 }
 
 export default function Header({ isFixed = true }: HeaderProps) {
-  const user = "ali";
+  const user = "kf";
   return (
     <div>
       <header

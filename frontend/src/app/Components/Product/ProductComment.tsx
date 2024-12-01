@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import StarRating from "../StarRating";
-import { Comments } from "@/app/lib/UserCommen";
+import { Comments } from "@/app/lib/Mock/UserCommen";
 
 export default function ProductComment() {
   const commentFilter = [
@@ -61,7 +61,7 @@ export default function ProductComment() {
               <div className="text-black text-[.75rem] no-underline">
                 {comment.customerName}
               </div>
-              <StarRating rating={4} />
+              <StarRating rating={comment.rating} />
               <div className="flex"></div>
               <div className="text-[rgba(0,0,0,.54)] text-[.75rem] mb-[.9375rem] mt-1">
                 {comment.Datetime}

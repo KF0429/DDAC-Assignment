@@ -1,12 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { Cart } from "@/app/lib/CartData";
+import { Cart } from "@/app/lib/Mock/CartData";
 interface CartIconProps {
   user: string;
 }
 
 export default function CartIcon({ user }: CartIconProps) {
-  const cartCount = Cart.filter((item) => item.user === user).length;
+  const cartCount = Cart.filter((item) => item.BuyerName === user).length;
   return (
     <div className="relative">
       <div>

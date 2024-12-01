@@ -2,19 +2,12 @@
 
 import React from 'react';
 import TopNav from '@/app/Components/Header/TopNav';
-import StickyHeader from '@/app/Components/StickyHeader';
-import Footer from '@/app/Components/Footer';
 
 export default function ProfilePage() {
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
-      {/* Sticky Header */}
-      <StickyHeader isFixed={true} />
-
-      {/* Top Navigation */}
-      <header className="bg-[#ee4d2d]">
-        <TopNav />
-      </header>
+    <div className="min-h-screen bg-gray-100">
+      {/* Include TopNav */}
+      <TopNav />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-6 flex">
@@ -139,9 +132,6 @@ export default function ProfilePage() {
           </form>
         </section>
       </div>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

@@ -4,6 +4,22 @@ import React, { useState } from 'react';
 import Starting from '@/app/Components/Starting';
 import { useRouter } from 'next/navigation';
 
+// Simulated user database
+const mockUsers = [
+  {
+    username: 'john_doe',
+    email: 'john@example.com',
+    phone: '1234567890',
+    password: 'password123',
+  },
+  {
+    username: 'jane_smith',
+    email: 'jane@example.com',
+    phone: '0987654321',
+    password: 'password456',
+  },
+];
+
 export default function LoginPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -18,16 +34,31 @@ export default function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login process
-    console.log('Login Attempt:', formData);
 
-    // Redirect to homepage or user dashboard after login
-    alert('Login successful!');
-    router.push('/'); // Adjust this path to your homepage/dashboard
+    // Validate user credentials
+    const user = mockUsers.find(
+      (user) =>
+        (user.email === formData.emailOrPhone ||
+          user.phone === formData.emailOrPhone) &&
+        user.password === formData.password
+    );
+
+    if (user) {
+      // Save logged-in user to localStorage
+      localStorage.setItem(
+        'loggedInUser',
+        JSON.stringify({ username: user.username })
+      );
+
+      alert('Login successful!');
+      router.push('/'); // Redirect to homepage/dashboard
+    } else {
+      alert('Invalid email/phone or password!');
+    }
   };
 
   const navigateToRegister = () => {
-    router.push('/authentication/register'); // Navigate to Sign Up page
+    router.push('/authentication?page=register');
   };
 
   return (

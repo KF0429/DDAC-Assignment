@@ -7,7 +7,7 @@ export default function TopNav() {
       <nav className="mr-auto ml-auto max-w-[1200px] text-white items-center flex">
         <div className="flex items-center">
           <Link
-            href="/buyer"
+            href="/seller"
             className="text-white text-sm font-light outline-0 overflow-visible p-1 relative no-underline"
           >
             Seller Centre

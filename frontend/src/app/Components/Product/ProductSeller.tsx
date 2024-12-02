@@ -8,7 +8,7 @@ export default function ProductSeller() {
       <div className=" border-r border-r-[rgba(0,0,0,.05)] box-border flex max-w-[440px] pr-[25px]">
         <Link
           className="flex-shrink-0 mr-5 outline-none overflow-visible relative cursor-pointer no-underline"
-          href={""}
+          href={`/shope/{shopeName}`}
         >
           <div className="h-[80px] w-[80px] relative border border-[rgba(0,0,0,.09)] rounded-[50%] box-border inline-block">
             <div className="bg-white rounded-[50%] overflow-hidden pt-[100%] w-full relative cursor-pointer">
@@ -66,6 +66,7 @@ export default function ProductSeller() {
           </div>
         </div>
       </div>
+      {/**NGzCXN */}
       <div className="flex-grow-[1] grid text-[rgba(0,0,0,.4)] gap-y-5 gap-x-[50px] pl-[25px] grid-cols-repeat-3-auto"></div>
     </div>
   );

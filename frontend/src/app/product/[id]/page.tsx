@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Header from "@/app/Components/Header/Header";
-import { mockProducts } from "@/app/lib/ProductMock";
+import { mockProducts } from "@/app/lib/Mock/ProductMock";
 import Quantitycontrol from "@/app/Components/Product/Quantitycontrol";
 import ProductDescription from "@/app/Components/Product/ProductDescription";
 import ProductComment from "@/app/Components/Product/ProductComment";
@@ -39,7 +39,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     }
   };
   const handleClick = () => {
-    //handle alert prompt
+    //handle alert
     setShowAlert(true);
     setTimeout(() => {
       setShowAlert(false);

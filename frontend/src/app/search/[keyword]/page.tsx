@@ -4,7 +4,7 @@ import React from "react";
 import StickyHeader from "@/app/Components/StickyHeader";
 import SideBar from "@/app/Components/SideBar";
 import ProductCard from "@/app/Components/ProductCard";
-import { mockProducts } from "@/app/lib/ProductMock";
+import { mockProducts } from "@/app/lib/Mock/ProductMock";
 import Sortbar from "@/app/Components/Sortbar";
 
 interface Pageprops {

@@ -1,11 +1,17 @@
 import React from "react";
 import Image from "next/image";
-
-export default function ActionButton({ price }: { price: number }) {
+export default function ActionButton({
+  price,
+  buttonAction,
+}: {
+  price: number;
+  buttonAction: () => void;
+}) {
   return (
     <div className="pl-[20px]">
       <div className="flex">
         <button
+          onClick={buttonAction}
           className="bg-[rgba(208,1,27,.08)] outline-0 overflow-visible relative flex-row border-solid border-[1px]
                                 shadow-ssm border-[#d0011b] text-[#d0011b] max-w-[250px] h-12 py-0 px-5 text-ellipsis justify-center items-center rounded-sm
                                 box-border cursor-pointer flex capitalize m-0 mr-[15px] min-w-[180px]"

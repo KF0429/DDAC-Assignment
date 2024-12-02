@@ -1,18 +1,18 @@
 import React from "react";
 import Link from "next/link";
-import { Cart } from "@/app/lib/CartData";
+import { Cart } from "@/app/lib/Mock/CartData";
 interface CartIconProps {
   user: string;
 }
 
 export default function CartIcon({ user }: CartIconProps) {
-  const cartCount = Cart.filter((item) => item.user === user).length;
+  const cartCount = Cart.filter((item) => item.BuyerName === user).length;
   return (
     <div className="relative">
       <div>
         <div className="px-[10px] py-0">
           <Link
-            href={""}
+            href={"/cart"}
             className="items-center flex cursor-pointer ml-[5px] mt-0 mr-0 mb-0 outline-0 overflow-visible relative no-underline"
           >
             <svg
@@ -23,10 +23,10 @@ export default function CartIcon({ user }: CartIconProps) {
               <polyline
                 fill="none"
                 points="2 1.7 5.5 1.7 9.6 18.3 21.2 18.3 24.6 6.1 7 6.1"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-miterlimit="10"
-                stroke-width="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeMiterlimit={10}
+                strokeWidth={2.5}
               ></polyline>
               <circle cx="10.7" cy="23" r="2.2" stroke="none"></circle>
               <circle cx="19.7" cy="23" r="2.2" stroke="none"></circle>

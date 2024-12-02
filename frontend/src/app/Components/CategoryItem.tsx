@@ -2,14 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface CategoryItemProps {
-  href: string;
   src: string;
   alt: string;
   description: string;
 }
 
 export default function CategoryItem({
-  href,
   src,
   alt,
   description,
@@ -17,7 +15,7 @@ export default function CategoryItem({
   return (
     <li className="float-none h-[151px] important-width touch-pan-y">
       <Link
-        href={href}
+        href={""}
         className="bg-white border-b-[1px] border-solid before:content-[''] before:block before:pt-[126%] 
         before:w-full border-[rgba(0,0,0,.05)] border-r-[1px] text-[rgba(0,0,0,.87] block relative text-center no-underline 
         [transition:transform_0.1s_cubic-bezier(0.4,0,0.6,1),box-shadow_0.1s_cubic-bezier(0.4,0,0.6,1)] hover:scale-105 hover:shadow-lg"

@@ -69,7 +69,7 @@ export default function Banner() {
                           shadow-arrow fill-[rgba(0,0,0,.87)]"
               >
                 <svg
-                  enable-background="new 0 0 13 20"
+                  enableBackground={"new 0 0 13 20"}
                   viewBox="0 0 13 20"
                   role="img"
                   className="text-white h-[1em] w-[1em]"
@@ -91,7 +91,7 @@ export default function Banner() {
                           shadow-arrow fill-[rgba(0,0,0,.87)]"
               >
                 <svg
-                  enable-background="new 0 0 13 20"
+                  enableBackground={"new 0 0 13 20"}
                   viewBox="0 0 13 20"
                   role="img"
                   className="text-white h-[1em] w-[1em]"

@@ -49,7 +49,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
       {showDropdown && (
         <div className="absolute top-full mt-2 right-0 bg-white text-black shadow-md rounded-md">
           <Link
-            href="/buyerkahwaiside"
+            href="/buyerkahwaiside/MyAccount?page=profile"
             className="block px-4 py-2 hover:bg-gray-200"
           >
             My Profile

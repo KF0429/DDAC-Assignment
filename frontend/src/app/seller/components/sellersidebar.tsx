@@ -1,34 +1,32 @@
-import Link from 'next/link'
-import { SidebarItem } from '../types/dashboard'
+import Link from 'next/link';
+import { SidebarItem } from '../types/dashboard';
 
 const orderSidebarItem: SidebarItem[] = [
-  { name: "My Orders", href: "/seller/orders" },
-  { name: "Cancellation", href: "/seller/cancellation" },
-  { name: "Return/Refund", href: "/seller/return" },
-]
+  { name: 'My Orders', href: '/seller/orders' },
+  { name: 'Cancellation', href: '/seller/cancellation' },
+];
 
 const productSidebarItem: SidebarItem[] = [
-  { name: "My Products", href: "/seller/myproduct" },
-  { name: "Add New Product", href: "/seller/addproduct" },
-  { name: "My Inventory", href: "/seller/inventory" },
-]
+  { name: 'My Products', href: '/seller/myproduct' },
+  { name: 'Add New Product', href: '/seller/addproduct' },
+];
 
 const financeSidebarItem: SidebarItem[] = [
-  { name: "My Income", href: "/seller/income" },
-  { name: "My Balance", href: "/seller/balance" },
-  { name: "Bank Accounts", href: "/seller/bankaccounts" },
-]
+  { name: 'My Income', href: '/seller/income' },
+  { name: 'My Balance', href: '/seller/balance' },
+  { name: 'Bank Accounts', href: '/seller/bankaccounts' },
+];
 
 const shopSidebarItem: SidebarItem[] = [
-  { name: "Shop Rating", href: "/seller/shoprating" },
-  { name: "Shop Information", href: "/seller/shopinformation" },
-  { name: "Shop Categories", href: "/seller/shopcategories" },
-  { name: "My Reports", href: "/seller/myreports" },
-]
+  { name: 'Shop Rating', href: '/seller/shoprating' },
+  { name: 'Shop Information', href: '/seller/shopinformation' },
+  { name: 'Shop Categories', href: '/seller/shopcategories' },
+  { name: 'My Reports', href: '/seller/myreports' },
+];
 
 export function Sidebar() {
   return (
-    <nav className="w-55 bg-gray-100 overflow-y-auto">
+    <nav className="w-55 bg-gray-50 overflow-y-auto">
       <div className="p-4">
         <h2 className="text-lg font-bold">Order</h2>
         <ul className="flex flex-col gap-2 list-none pl-4">
@@ -72,6 +70,5 @@ export function Sidebar() {
         </ul>
       </div>
     </nav>
-  )
+  );
 }
-

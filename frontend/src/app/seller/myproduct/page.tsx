@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
+
 // Mock data for products
 const mockProducts = [
   {

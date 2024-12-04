@@ -137,135 +137,139 @@ export default function MyOrders() {
       </div>
 
       {/* Orders table */}
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Product(s)</TableHead>
-            <TableHead>Order Total</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Countdown</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredOrders.map((order) => (
-            <TableRow key={order.id}>
-              <TableCell>{order.products}</TableCell>
-              <TableCell>{order.total}</TableCell>
-              <TableCell>{order.status}</TableCell>
-              <TableCell>{order.countdown}</TableCell>
-              <TableCell>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="link" onClick={() => handleEdit(order)}>
-                      Edit
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Edit Order</DialogTitle>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="products" className="text-right">
-                          Products
-                        </Label>
-                        <Input
-                          id="products"
-                          value={editingOrder?.products || ''}
-                          onChange={(e) =>
-                            setEditingOrder(
-                              (prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      products: e.target.value,
-                                    }
-                                  : null // Ensure fallback to null if editingOrder is null
-                            )
-                          }
-                          className="col-span-3"
-                        />
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="total" className="text-right">
-                          Total
-                        </Label>
-                        <Input
-                          id="total"
-                          value={editingOrder?.total || ''}
-                          onChange={(e) =>
-                            setEditingOrder(
-                              (prev) =>
-                                prev
-                                  ? { ...prev, total: e.target.value } // Ensure we only modify a valid `editingOrder`
-                                  : null // Handle the case where `editingOrder` is null
-                            )
-                          }
-                          className="col-span-3"
-                        />
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="status" className="text-right">
-                          Status
-                        </Label>
-                        <Select
-                          value={editingOrder?.status || ''}
-                          onValueChange={(value) =>
-                            setEditingOrder(
-                              (prev) =>
-                                prev
-                                  ? { ...prev, status: value } // Ensure `prev` exists and update `status`
-                                  : null // Handle the case where `editingOrder` is null
-                            )
-                          }
-                        >
-                          <SelectTrigger className="col-span-3">
-                            <SelectValue placeholder="Select a status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Unpaid">Unpaid</SelectItem>
-                            <SelectItem value="To Ship">To Ship</SelectItem>
-                            <SelectItem value="Shipping">Shipping</SelectItem>
-                            <SelectItem value="Completed">Completed</SelectItem>
-                            <SelectItem value="Return/Refund">
-                              Return/Refund
-                            </SelectItem>
-                            <SelectItem value="Failed Delivery">
-                              Failed Delivery
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="countdown" className="text-right">
-                          Countdown
-                        </Label>
-                        <Input
-                          id="countdown"
-                          value={editingOrder?.countdown || ''}
-                          onChange={(e) =>
-                            setEditingOrder(
-                              (prev) =>
-                                prev
-                                  ? { ...prev, countdown: e.target.value } // Update `countdown` while retaining all other fields
-                                  : null // Handle the case where `editingOrder` is null
-                            )
-                          }
-                          className="col-span-3"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex justify-end">
-                      <Button onClick={handleSave}>Save changes</Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </TableCell>
+      <div className="rounded-md border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Product(s)</TableHead>
+              <TableHead>Order Total</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Countdown</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {filteredOrders.map((order) => (
+              <TableRow key={order.id}>
+                <TableCell>{order.products}</TableCell>
+                <TableCell>{order.total}</TableCell>
+                <TableCell>{order.status}</TableCell>
+                <TableCell>{order.countdown}</TableCell>
+                <TableCell>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="link" onClick={() => handleEdit(order)}>
+                        Edit
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Edit Order</DialogTitle>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="products" className="text-right">
+                            Products
+                          </Label>
+                          <Input
+                            id="products"
+                            value={editingOrder?.products || ''}
+                            onChange={(e) =>
+                              setEditingOrder(
+                                (prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        products: e.target.value,
+                                      }
+                                    : null // Ensure fallback to null if editingOrder is null
+                              )
+                            }
+                            className="col-span-3"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="total" className="text-right">
+                            Total
+                          </Label>
+                          <Input
+                            id="total"
+                            value={editingOrder?.total || ''}
+                            onChange={(e) =>
+                              setEditingOrder(
+                                (prev) =>
+                                  prev
+                                    ? { ...prev, total: e.target.value } // Ensure we only modify a valid `editingOrder`
+                                    : null // Handle the case where `editingOrder` is null
+                              )
+                            }
+                            className="col-span-3"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="status" className="text-right">
+                            Status
+                          </Label>
+                          <Select
+                            value={editingOrder?.status || ''}
+                            onValueChange={(value) =>
+                              setEditingOrder(
+                                (prev) =>
+                                  prev
+                                    ? { ...prev, status: value } // Ensure `prev` exists and update `status`
+                                    : null // Handle the case where `editingOrder` is null
+                              )
+                            }
+                          >
+                            <SelectTrigger className="col-span-3">
+                              <SelectValue placeholder="Select a status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Unpaid">Unpaid</SelectItem>
+                              <SelectItem value="To Ship">To Ship</SelectItem>
+                              <SelectItem value="Shipping">Shipping</SelectItem>
+                              <SelectItem value="Completed">
+                                Completed
+                              </SelectItem>
+                              <SelectItem value="Return/Refund">
+                                Return/Refund
+                              </SelectItem>
+                              <SelectItem value="Failed Delivery">
+                                Failed Delivery
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="countdown" className="text-right">
+                            Countdown
+                          </Label>
+                          <Input
+                            id="countdown"
+                            value={editingOrder?.countdown || ''}
+                            onChange={(e) =>
+                              setEditingOrder(
+                                (prev) =>
+                                  prev
+                                    ? { ...prev, countdown: e.target.value } // Update `countdown` while retaining all other fields
+                                    : null // Handle the case where `editingOrder` is null
+                              )
+                            }
+                            className="col-span-3"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end">
+                        <Button onClick={handleSave}>Save changes</Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 import Banner from "./Components/Banner";
 import CategoryItem from "./Components/CategoryItem";
-import Footer from "./Components/Footer";
+import Footer from "./Components/General/Footer";
 import StickyHeader from "./Components/StickyHeader";
 import Multiplebutton from "./Components/Multiplebutton";
 import ProductCard from "./Components/ProductCard";
-import { mockProducts } from "./lib/ProductMock";
-import { categories } from "./lib/CategoryMock";
+import { mockProducts } from "./lib/Mock/ProductMock";
+import { categories } from "./lib/Mock/CategoryMock";
 
 export default function main() {
   return (

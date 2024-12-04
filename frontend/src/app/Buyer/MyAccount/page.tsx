@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
-import ProfileSideBar from '@/app/buyerkahwaiside/profileSideBar';
+import ProfileSideBar from '@/app/Buyer/profileSideBar';
 import Header from '@/app/Components/Header/Header';
-import Footer from '@/app/Components/Footer';
+import Footer from '@/app/Components/General/Footer';
 
 // Dynamically import pages
 const Profile = React.lazy(() => import('./Profile'));
@@ -44,8 +44,6 @@ export default function MyAccountPage() {
           {renderContent()}
         </section>
       </div>
-
-      {/* Footer */}
       <Footer />
     </div>
   );

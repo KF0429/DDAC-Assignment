@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import ProfileSideBar from '@/app/buyerkahwaiside/profileSideBar';
+import ProfileSideBar from '@/app/Buyer/profileSideBar';
 import Header from '@/app/Components/Header/Header';
-import Footer from '@/app/Components/Footer';
+import Footer from '@/app/Components/General/Footer';
 
 interface Order {
   id: string;

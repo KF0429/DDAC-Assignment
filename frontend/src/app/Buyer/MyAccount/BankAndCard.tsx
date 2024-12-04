@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import AddCardModal from '@/app/buyerkahwaiside/Components/addcardModel';
+import AddCardModal from '@/app/Buyer/Components/addcardModel';
 
 export default function BankAndCard() {
   const [isModalOpen, setIsModalOpen] = useState(false);

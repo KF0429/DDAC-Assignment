@@ -20,7 +20,7 @@ export default function SellerLogin() {
       formData.password === 'password'
     ) {
       alert('Seller Login Successful!');
-      router.push('./seller'); // Navigate to seller dashboard
+      router.push('/seller'); // Navigate to seller dashboard
     } else {
       alert('Invalid login credentials for seller!');
     }

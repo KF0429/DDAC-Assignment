@@ -19,7 +19,17 @@ function BreadcrumbText() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
 
-    return `Home > ${currentPage}`;
+    if (currentPage === 'Orders') return `Home > My Orders`;
+    else if (currentPage === 'Myproduct') return `Home > My Products`;
+    else if (currentPage === 'Addproduct') return `Home > Add New Product`;
+    else if (currentPage === 'Income') return `Home > My Income`;
+    else if (currentPage === 'Balance') return `Home > My Balance`;
+    else if (currentPage === 'Bankaccounts') return `Home > Bank Accounts`;
+    else if (currentPage === 'Shoprating') return `Home > Shop Rating`;
+    else if (currentPage === 'Shopinformation')
+      return `Home > Shop Information`;
+    else if (currentPage === 'Shopcategories') return `Home > Shop Categories`;
+    else return `Home > ${currentPage}`;
   };
 
   return (

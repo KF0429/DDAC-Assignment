@@ -6,7 +6,7 @@ import StickyHeader from './Components/StickyHeader';
 import Multiplebutton from './Components/Multiplebutton';
 import ProductCard from './Components/ProductCard';
 import { mockProducts } from './lib/Mock/ProductMock';
-import { categories } from './lib//Mock/CategoryMock';
+import { categories } from './lib/Mock/CategoryMock';
 
 export default function main() {
   return (

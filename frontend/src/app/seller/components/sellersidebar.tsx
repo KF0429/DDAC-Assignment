@@ -21,7 +21,6 @@ const shopSidebarItem: SidebarItem[] = [
   { name: 'Shop Rating', href: '/seller/shoprating' },
   { name: 'Shop Information', href: '/seller/shopinformation' },
   { name: 'Shop Categories', href: '/seller/shopcategories' },
-  { name: 'My Reports', href: '/seller/myreports' },
 ];
 
 export function Sidebar() {

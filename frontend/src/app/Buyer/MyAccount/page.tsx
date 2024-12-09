@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
-import ProfileSideBar from '@/app/Buyer/profileSideBar';
+import ProfileSideBar from '@/app/Buyer/Components/profileSideBar';
 import Header from '@/app/Components/Header/Header';
 import Footer from '@/app/Components/General/Footer';
 

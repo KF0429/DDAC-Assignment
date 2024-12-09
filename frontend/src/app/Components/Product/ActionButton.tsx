@@ -34,7 +34,7 @@ export default function ActionButton({
         >
           <div>Buy With Voucher</div>
           <div className="text-lg font-medium text-white capitalize">
-            RM{price}
+            RM{price.toFixed(2)}
           </div>
         </button>
       </div>

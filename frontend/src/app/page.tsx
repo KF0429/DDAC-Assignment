@@ -1,14 +1,41 @@
 "use client";
 import Banner from "./Components/Banner";
 import CategoryItem from "./Components/CategoryItem";
-import Footer from "./Components/Footer";
+import Footer from "./Components/General/Footer";
 import StickyHeader from "./Components/StickyHeader";
 import Multiplebutton from "./Components/Multiplebutton";
 import ProductCard from "./Components/ProductCard";
-import { mockProducts } from "./lib/ProductMock";
-import { categories } from "./lib/CategoryMock";
+import { Product } from "./lib/Interface/Product";
+import { categories } from "./lib/Mock/CategoryMock";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
-export default function main() {
+export default function Main() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:5088/api/Products");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch Products");
+        }
+        const data = await response.json();
+        setProducts(data);
+        console.log("this is the data", data);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "An unknown error occurred";
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
   return (
     <div>
       <div className="flex flex-col min-h-screen relative">
@@ -25,12 +52,6 @@ export default function main() {
                   </div>
                 </div>
                 <div className="ml-auto mr-auto w-[1200px] opacity-100">
-                  {" "}
-                  {/**Here is main contents */}
-                  <div>
-                    <div style={{ marginTop: "20px", height: "110px" }}></div>
-                  </div>
-                  {/**this is the new user banner */}
                   <div className="min-h-[50rem]">
                     {/**Categories Section */}
                     <div className="bg-white mt-5 min-h-[18.875rem]">
@@ -48,7 +69,6 @@ export default function main() {
                                 {categories.map((category, index) => (
                                   <CategoryItem
                                     key={index}
-                                    href={category.href}
                                     src={category.src}
                                     alt={category.alt}
                                     description={category.description}
@@ -94,21 +114,36 @@ export default function main() {
                                 style={{ display: "block" }}
                                 className="min-h-[3.75rem] w-full"
                               >
+                                {loading && <p>Loading Products</p>}
+                                {error && <p>Error:{error}</p>}
                                 <div className="content-start flex flex-wrap min-h-[calc(100vh-11.25rem)] p-t-[.3125rem]">
-                                  {mockProducts.map((product, index) => (
-                                    <div
-                                      key={index}
-                                      className="box-border p-[.3125rem] w-[16.66667%]"
+                                  {products
+                                    .slice(0, 36)
+                                    .map((product, index) => (
+                                      <div
+                                        key={index}
+                                        className="box-border p-[.3125rem] w-[16.66667%]"
+                                      >
+                                        <ProductCard
+                                          // key={product.id}
+                                          productID={product.productID}
+                                          photo={product.photo}
+                                          productName={product.productName}
+                                          price={product.price}
+                                          averageRating={product.averageRating}
+                                        />
+                                      </div>
+                                    ))}
+                                  <div className="mt-5 text-center w-full">
+                                    <Link
+                                      href={"/BrowseProduct"}
+                                      className="h-10 min-w-[24.375rem] text-[#555] bg-white border border-[rgba(0,0,0,.09)] shadow-ssm 
+                                    outline-0 overflow-visible relative max-w-[220] py-0 px-5 inline-flex text-ellipsis items-center rounded-sm box-border cursor-pointer
+                                    flex-col text-sm justify-center capitalize hover:bg-slate-50"
                                     >
-                                      <ProductCard
-                                        id={product.id}
-                                        imageUrl={product.imageUrl}
-                                        title={product.title}
-                                        price={product.price}
-                                        rating={product.rating}
-                                      />
-                                    </div>
-                                  ))}
+                                      See More
+                                    </Link>
+                                  </div>
                                 </div>
                               </section>
                             </div>

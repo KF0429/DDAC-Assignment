@@ -1,26 +1,26 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-
-interface ProductCardParam {
-  id: number;
-  imageUrl: string;
-  title: string;
-  price: number;
-  rating: number;
-}
+import { Product } from "../lib/Interface/ProductCard";
 
 export default function ProductCard({
-  id,
-  imageUrl,
-  title,
+  productID,
+  photo,
+  productName,
   price,
-  rating,
-}: ProductCardParam) {
-  const handleClick = () => {
-    sessionStorage.setItem("productTitle", title);
-    sessionStorage.setItem("productImageUrl", imageUrl);
-  };
+  averageRating,
+}: Product) {
+  console.log("ProductCard Props:", {
+    productID,
+    photo,
+    productName,
+    price,
+    averageRating,
+  });
+  // const handleClick = () => {
+  //   sessionStorage.setItem("productTitle", productName);
+  //   sessionStorage.setItem("productImageUrl", photo);
+  // };
   return (
     <div>
       <div className="contents">
@@ -32,15 +32,15 @@ export default function ProductCard({
           aria-hidden="true"
         >
           <Link
-            href={`/product/${id}`}
-            onClick={handleClick}
+            href={`/product/${productID}`}
+            // onClick={handleClick}
             prefetch={true}
             className="contents"
           >
             <div className="flex h-full cursor-pointer flex-col bg-white">
               <div className="relative z-0 w-full pt-[100%]">
                 <Image
-                  src={imageUrl}
+                  src={photo}
                   alt="product image"
                   width={190.05}
                   height={190.05}
@@ -50,7 +50,7 @@ export default function ProductCard({
               <div className="p-2 flex-1 flex flex-col justify-between">
                 <div className="space-y-1 mb-1 flex-1 flex-col justify-between min-h-[4rem]">
                   <div className="whitespace-normal line-clamp-2 break-words min-h-[2.5rem] text-sm">
-                    {title}
+                    {productName}
                   </div>
                   <div className="flex items-center">
                     <div
@@ -63,7 +63,7 @@ export default function ProductCard({
                           RM
                         </span>
                         <span className="font-medium text-base/5 overflow-hidden whitespace-nowrap text-ellipsis">
-                          {price}
+                          {price.toFixed(2)}
                         </span>
                         <span className="text-xs leading-[.875rem] font-medium mr-px"></span>
                       </div>
@@ -81,7 +81,7 @@ export default function ProductCard({
                     ></Image>
                   </div>
                   <div className="text-black text-sm leading-[.875rem] flex-none">
-                    {rating}
+                    {averageRating}
                   </div>
                 </div>
               </div>

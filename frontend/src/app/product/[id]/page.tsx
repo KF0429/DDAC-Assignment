@@ -15,6 +15,7 @@ import TitleandRating from "@/app/Components/Product/TitleandRating";
 import ProductPriceInfo from "@/app/Components/Product/ProductPriceInfo";
 import Image from "next/image";
 import type { ProductCommenttype } from "@/app/lib/Interface/ProductCommenttype";
+import NoComment from "@/app/Components/Product/NoComment";
 export default function ProductPage({ params }: { params: { id: number } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [seller, setSeller] = useState<SellerInfo | null>(null);
@@ -68,6 +69,12 @@ export default function ProductPage({ params }: { params: { id: number } }) {
         const CommentResponse = await fetch(
           `http://localhost:5088/api/Comments/getCommentbyProductId/${params.id}`
         );
+        // this 404 is when the api is not fetching any thing == comment is empty
+        if (CommentResponse.status === 404) {
+          console.warn("No comments found for this product.");
+          setComments([]);
+          return;
+        }
         if (!CommentResponse.ok) {
           throw new Error(`Fail to fetch Comments`);
         }
@@ -149,6 +156,7 @@ export default function ProductPage({ params }: { params: { id: number } }) {
                     <section className="pt-[1.5625rem] bg-white rounded-sm shadow-ssm mt-[.9375rem] overflow-hidden block">
                       {seller ? (
                         <ProductSeller
+                          shopID={seller.shopID}
                           shopImage={seller.shopImage}
                           shopName={seller.shopName}
                           productsAmount={seller.productsAmount}
@@ -170,7 +178,11 @@ export default function ProductPage({ params }: { params: { id: number } }) {
                           />
                           <div>
                             <div style={{ display: "contents" }}>
-                              <ProductComment comments={comments} />
+                              {comments.length > 0 ? (
+                                <ProductComment comments={comments} />
+                              ) : (
+                                <NoComment />
+                              )}
                             </div>
                           </div>
                         </div>

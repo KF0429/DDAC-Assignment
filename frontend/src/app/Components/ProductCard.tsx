@@ -10,17 +10,6 @@ export default function ProductCard({
   price,
   averageRating,
 }: Product) {
-  console.log("ProductCard Props:", {
-    productID,
-    photo,
-    productName,
-    price,
-    averageRating,
-  });
-  // const handleClick = () => {
-  //   sessionStorage.setItem("productTitle", productName);
-  //   sessionStorage.setItem("productImageUrl", photo);
-  // };
   return (
     <div>
       <div className="contents">
@@ -33,7 +22,6 @@ export default function ProductCard({
         >
           <Link
             href={`/product/${productID}`}
-            // onClick={handleClick}
             prefetch={true}
             className="contents"
           >

@@ -1,8 +1,9 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-// import { SellerInfo } from "@/app/lib/Interface/SellerInfo";
+
 interface sellerinfo {
+  shopID: number;
   shopImage: string;
   shopName: string;
   totalRateCount: number;
@@ -10,6 +11,7 @@ interface sellerinfo {
   productsAmount: number;
 }
 export default function ProductSeller({
+  shopID,
   shopImage,
   shopName,
   totalRateCount,
@@ -58,7 +60,7 @@ export default function ProductSeller({
             <Link
               className="flex-row capitalize text-[#555] bg-white border border-[rgba(0,0,0,.09] shadow-ssm outline-0 overflow-visible relative
             h-[34px] max-w-[190px] min-w-[60px] py-0 px-[15px] inline-flex text-ellipsis items-center box-border cursor-pointer text-sm justify-center"
-              href={`/shop/{shopName}`}
+              href={`/shop/${shopID}`}
             >
               <Image
                 src={

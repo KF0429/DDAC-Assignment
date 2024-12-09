@@ -1,4 +1,5 @@
 export type SellerInfo = {
+  shopID: number;
   shopImage: string;
   shopName: string;
   productsAmount: number;

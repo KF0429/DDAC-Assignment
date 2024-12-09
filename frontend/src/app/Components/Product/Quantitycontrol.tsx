@@ -1,14 +1,14 @@
 import React from "react";
 import QuantityAjuster from "../General/QuantityAjuster";
 interface ProductQuantity {
-  quantity: number;
+  stock: number;
   maxQuantity: number;
   onIncrement: () => void;
   onDecrement: () => void;
 }
 
 export default function Quantitycontrol({
-  quantity,
+  stock,
   maxQuantity,
   onIncrement,
   onDecrement,
@@ -24,7 +24,7 @@ export default function Quantitycontrol({
             <div className="flex items-center">
               <div style={{ marginRight: "15px" }}>
                 <QuantityAjuster
-                  quantity={quantity}
+                  stock={stock}
                   onIncrement={onIncrement}
                   onDecrement={onDecrement}
                 />

@@ -1,9 +1,12 @@
 import React from "react";
 import Image from "next/image";
 import StarRating from "../StarRating";
-import { Comments } from "@/app/lib/Mock/UserCommen";
+import type { ProductCommenttype } from "@/app/lib/Interface/ProductCommenttype";
 
-export default function ProductComment() {
+interface ProductCommentProps {
+  comments: ProductCommenttype[];
+}
+export default function ProductComment({ comments }: ProductCommentProps) {
   const commentFilter = [
     { label: "all" },
     { label: "5 star (0)" },
@@ -45,7 +48,7 @@ export default function ProductComment() {
         </div>
       </div>
       <div style={{ opacity: "1" }}>
-        {Comments.map((comment, index) => (
+        {comments.map((comment, index) => (
           <div
             key={index}
             className="items-start border-b-[1px] border-[rgba(0,0,0,.09)] flex pt-4 pr-0 pb-4 pl-5"
@@ -53,57 +56,63 @@ export default function ProductComment() {
             {/**avatar */}
             <div className="mr-[.625rem] text-center w-10">
               <div className="border-0 h-10 w-10 rounded-[50%] box-border inline-block relative">
-                <Image src={comment.avatar} height={40} width={40} alt="" />
+                <Image
+                  className="rounded-[50%] block h-full left-0 absolute top-0 w-full"
+                  src={comment.avatar}
+                  height={40}
+                  width={40}
+                  alt=""
+                />
               </div>
             </div>
             {/**content */}
             <div className="flex-1">
               <div className="text-black text-[.75rem] no-underline">
-                {comment.customerName}
+                {comment.userName}
               </div>
               <StarRating rating={comment.rating} />
               <div className="flex"></div>
               <div className="text-[rgba(0,0,0,.54)] text-[.75rem] mb-[.9375rem] mt-1">
-                {comment.Datetime}
+                {comment.dateTime}
               </div>
 
               <div className="relative box-border my-[15px] mx-0 text-sm text-[rgba(0,0,0,.87)] break-words whitespace-pre-wrap">
                 {/**Quality */}
-                {comment.Quality && (
+                {comment.qualityFeedback && (
                   <div style={{ marginTop: "0px" }}>
                     <span style={{ color: "rgba(0,0,0,0.4)" }}>Quality: </span>
-                    {comment.Quality}
+                    {comment.qualityFeedback}
                   </div>
                 )}
                 {/**Description */}
-                {comment.Description && (
+                {comment.commentDescription && (
                   <div style={{ marginTop: "0.75rem" }}>
-                    {comment.Description}
+                    {comment.commentDescription}
                   </div>
                 )}
               </div>
               {/**product image */}
-              {comment.ProductImage.length > 0 && (
+              {comment.commentPhoto && (
                 <div className="mt-[.9375rem]">
                   <div className="flex flex-wrap w-full">
-                    {comment.ProductImage.map((image, i) => (
-                      <div
-                        key={i}
-                        className="cursor-zoom-in h-[4.5rem] mt-0 mr-[.625rem] mb-[.625rem] ml-0 relative w-[4.5rem]"
-                      >
-                        <div className="h-full relative w-full">
-                          <picture className="contents">
-                            <Image
-                              src={image}
-                              height={72}
-                              width={72}
-                              alt={`Product image ${i + 1}`}
-                              className="h-full left-0 object-cover absolute top-0 align-[initial] w-full border-0 overflow-clip"
-                            />
-                          </picture>
-                        </div>
+                    {/* {comment.productImage.map((image, i) => ( */}
+                    <div
+                      // key={i}
+                      className="cursor-zoom-in h-[4.5rem] mt-0 mr-[.625rem] mb-[.625rem] ml-0 relative w-[4.5rem]"
+                    >
+                      <div className="h-full relative w-full">
+                        <picture className="contents">
+                          <Image
+                            src={comment.commentPhoto}
+                            height={72}
+                            width={72}
+                            alt={"Product Image"}
+                            className="h-full left-0 object-cover absolute top-0 align-[initial] w-full border-0 overflow-clip"
+                          />
+                        </picture>
                       </div>
-                    ))}
+                    </div>
+                    {/* ))} */}
                   </div>
                 </div>
               )}

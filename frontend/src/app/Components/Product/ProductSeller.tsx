@@ -1,14 +1,27 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-export default function ProductSeller() {
+import { SellerInfo } from "@/app/lib/Interface/SellerInfo";
+// interface sellerinfo {
+//   ShopImage : string;
+//   ShopName : string;
+//   // ratingAmount: number;
+//   // JoinDate: string;
+//   // products: number;
+// }
+export default function ProductSeller({
+  shopImage,
+  shopName,
+}: // ratingAmount,
+// JoinDate,
+// products,
+SellerInfo) {
   return (
     <div className="items-center flex  justify-between overflow-visible pt-5 px-[25px] pb-[25px]">
       <div className=" border-r border-r-[rgba(0,0,0,.05)] box-border flex max-w-[440px] pr-[25px]">
         <Link
           className="flex-shrink-0 mr-5 outline-none overflow-visible relative cursor-pointer no-underline"
-          href={`/shope/{shopeName}`}
+          href={`/shop/{shopName}`}
         >
           <div className="h-[80px] w-[80px] relative border border-[rgba(0,0,0,.09)] rounded-[50%] box-border inline-block">
             <div className="bg-white rounded-[50%] overflow-hidden pt-[100%] w-full relative cursor-pointer">
@@ -27,9 +40,7 @@ export default function ProductSeller() {
             </div>
             <picture className="contents">
               <Image
-                src={
-                  "https://down-my.img.susercontent.com/file/6e0d547b3f3f148ec4242d826a9ff28e"
-                }
+                src={shopImage || ""}
                 alt=""
                 height={78.55}
                 width={78.55}
@@ -40,14 +51,14 @@ export default function ProductSeller() {
         </Link>
         <div className="flex flex-col flex-grow justify-between overflow-hidden">
           <div className="text-[rgba(0,0,0,.87)] text-base font-medium m-0  overflow-hidden text-ellipsis whitespace-nowrap">
-            Switch Official Store
+            {shopName}
           </div>
           <div className="items-center flex text-[#757575] text-sm"></div>
           <div className="flex mt-2">
             <Link
               className="flex-row capitalize text-[#555] bg-white border border-[rgba(0,0,0,.09] shadow-ssm outline-0 overflow-visible relative
             h-[34px] max-w-[190px] min-w-[60px] py-0 px-[15px] inline-flex text-ellipsis items-center box-border cursor-pointer text-sm justify-center"
-              href={`/shope/{shopeName}`}
+              href={`/shop/{shopName}`}
             >
               <Image
                 src={
@@ -67,7 +78,34 @@ export default function ProductSeller() {
         </div>
       </div>
       {/**NGzCXN */}
-      <div className="flex-grow-[1] grid text-[rgba(0,0,0,.4)] gap-y-5 gap-x-[50px] pl-[25px] grid-cols-repeat-3-auto"></div>
+      <div className="flex-grow-[1] grid text-[rgba(0,0,0,.4)] gap-y-5 gap-x-[50px] pl-[25px] grid-cols-3 auto-cols-[3]">
+        <div className="flex justify-between outline-0 relative">
+          <label className="text-[rgba(0,0,0.4)] mr-3 capitalize">
+            Ratings
+          </label>
+          <span className="text-[#d0011b] text-right whitespace-nowrap">
+            this is Rating
+          </span>
+        </div>
+        <div className="flex justify-between outline-0 relative">
+          <label className="text-[rgba(0,0,0.4)] mr-3 capitalize">
+            Join Date
+          </label>
+          <span className="text-[#d0011b] text-right whitespace-nowrap">
+            this is Join Date
+          </span>
+        </div>
+        <div className="flex justify-between outline-0 relative">
+          <Link href={""} className="no-underline">
+            <label className="text-[rgba(0,0,0.4)] mr-3 capitalize cursor-default">
+              Products
+            </label>
+            <span className="text-[#d0011b] text-right whitespace-nowrap">
+              This is Product Amount
+            </span>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

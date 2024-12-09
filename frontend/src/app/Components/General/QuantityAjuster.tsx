@@ -1,12 +1,12 @@
 import React from "react";
 interface ProductQuantity {
-  quantity: number;
+  stock: number;
   onIncrement: () => void;
   onDecrement: () => void;
 }
 
 export default function QuantityAjuster({
-  quantity,
+  stock,
   onIncrement,
   onDecrement,
 }: ProductQuantity) {
@@ -19,7 +19,7 @@ export default function QuantityAjuster({
                                           w-8 transition duration-100 normal-case ease-sharp-motion-curve"
       >
         <svg
-          enable-background="new 0 0 10 10"
+          enableBackground="new 0 0 10 10"
           viewBox="0 0 10 10"
           x="0"
           y="0"
@@ -32,10 +32,11 @@ export default function QuantityAjuster({
         className="text-[#d0011b] border-l-0 border-r-0 box-border cursor-text text-base font-normal h-8 text-center w-[50px]
                                             items-center bg-transparent border border-[rgba(0,0,0,0.09)] flex justify-center tracking-normal leading-[1] outline-none ease-sharp-motion-curve"
         type="text"
-        value={quantity}
+        value={stock}
+        readOnly
       />
       <span className="h-[1px] m-0 overflow-hidden absolute whitespace-nowrap w-[1px] z-[-1000] text-[#757575]">
-        Quantity {quantity}
+        Quantity {stock}
       </span>
       <button
         onClick={onIncrement}
@@ -44,7 +45,7 @@ export default function QuantityAjuster({
                                           w-8 transition duration-100 normal-case ease-sharp-motion-curve"
       >
         <svg
-          enable-background="new 0 0 10 10"
+          enableBackground="new 0 0 10 10"
           viewBox="0 0 10 10"
           x="0"
           y="0"

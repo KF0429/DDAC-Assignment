@@ -4,9 +4,13 @@ import StarRating from "../StarRating";
 export default function TitleandRating({
   title,
   rating,
+  ratingAmount,
+  itemSold,
 }: {
   title: string;
   rating: number;
+  ratingAmount: number;
+  itemSold: number;
 }) {
   return (
     <div>
@@ -24,14 +28,16 @@ export default function TitleandRating({
         </button>
         <button className="bg-transparent border-0 border-l overflow-visible cursor-pointer items-center py-0 px-[15px] flex normal-case m-0 border-l-[rgba(0,0,0,0.14)]">
           <div className="border-b-[#555] text-[#222] text-base mr-[5px] pb-[1px] border-b cursor-pointer">
-            4.4k
+            {ratingAmount}
           </div>
           <div className="mr-[5px] py-1 px-0 capitalize text-[#767676]">
             ratings
           </div>
         </button>
         <div className="items-center py-0 px-[15px] flex border-l border-l-[rgba(0,0,0,0.14)]">
-          <div className="mr-[5px] text-[#222] text-base pb-[1px]">9.3k</div>
+          <div className="mr-[5px] text-[#222] text-base pb-[1px]">
+            {itemSold}
+          </div>
           <div className="mr-[5px] capitalize text-[#767676] text-sm pt-1 pb-1">
             Sold
           </div>

@@ -12,7 +12,7 @@ export default function ProductPriceInfo({ price }: { price: number }) {
       <section className="block">
         <div className="items-center flex">
           <div className="flex-none whitespace-nowrap text-[#d0011b] text-3xl font-medium">
-            RM{price}
+            RM{price.toFixed(2)}
           </div>
         </div>
       </section>

@@ -46,6 +46,7 @@ export default function ProductPage({ params }: { params: { id: number } }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        //to gte the product by product ID
         const response = await fetch(
           `http://localhost:5088/api/Products/with-seller/${params.id}`
         );
@@ -54,15 +55,16 @@ export default function ProductPage({ params }: { params: { id: number } }) {
         }
         const data = await response.json();
         setProduct(data);
+
+        //To get the seller information by the ShopID
         const SellerID = data.shopID;
-        console.log(data.shopID);
         const SellerResponse = await fetch(
           `http://localhost:5088/api/Sellers/${SellerID}`
         );
-
         const sellerInfo = await SellerResponse.json();
         setSeller(sellerInfo);
-        console.log(sellerInfo);
+        console.log(`the product amount is${sellerInfo.productsAmount}`);
+        //To Get the Comment
         const CommentResponse = await fetch(
           `http://localhost:5088/api/Comments/getCommentbyProductId/${params.id}`
         );
@@ -71,7 +73,7 @@ export default function ProductPage({ params }: { params: { id: number } }) {
         }
         const commentData: ProductCommenttype[] = await CommentResponse.json();
         setComments(commentData);
-        console.log(commentData);
+        // console.log(commentData);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "An unknown error occurred";
@@ -149,6 +151,9 @@ export default function ProductPage({ params }: { params: { id: number } }) {
                         <ProductSeller
                           shopImage={seller.shopImage}
                           shopName={seller.shopName}
+                          productsAmount={seller.productsAmount}
+                          totalRateCount={seller.totalRateCount}
+                          joinDate={seller.dateTime}
                         />
                       ) : (
                         <p>loading informationi</p>

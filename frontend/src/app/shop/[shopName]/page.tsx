@@ -4,7 +4,6 @@ import Link from "next/link";
 import Sortbar from "@/app/Components/Sortbar";
 import Shopinfo from "@/app/Components/ShopePage/Shopinfo";
 import Categoryfilter from "@/app/Components/ShopePage/Categoryfilter";
-import { mockSeller } from "@/app/lib/Mock/SellerInformation";
 
 export default function page() {
   return (

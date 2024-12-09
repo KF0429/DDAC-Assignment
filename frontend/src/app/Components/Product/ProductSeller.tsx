@@ -1,21 +1,21 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { SellerInfo } from "@/app/lib/Interface/SellerInfo";
-// interface sellerinfo {
-//   ShopImage : string;
-//   ShopName : string;
-//   // ratingAmount: number;
-//   // JoinDate: string;
-//   // products: number;
-// }
+// import { SellerInfo } from "@/app/lib/Interface/SellerInfo";
+interface sellerinfo {
+  shopImage: string;
+  shopName: string;
+  totalRateCount: number;
+  joinDate: string;
+  productsAmount: number;
+}
 export default function ProductSeller({
   shopImage,
   shopName,
-}: // ratingAmount,
-// JoinDate,
-// products,
-SellerInfo) {
+  totalRateCount,
+  joinDate,
+  productsAmount,
+}: sellerinfo) {
   return (
     <div className="items-center flex  justify-between overflow-visible pt-5 px-[25px] pb-[25px]">
       <div className=" border-r border-r-[rgba(0,0,0,.05)] box-border flex max-w-[440px] pr-[25px]">
@@ -84,7 +84,7 @@ SellerInfo) {
             Ratings
           </label>
           <span className="text-[#d0011b] text-right whitespace-nowrap">
-            this is Rating
+            {totalRateCount}
           </span>
         </div>
         <div className="flex justify-between outline-0 relative">
@@ -92,7 +92,7 @@ SellerInfo) {
             Join Date
           </label>
           <span className="text-[#d0011b] text-right whitespace-nowrap">
-            this is Join Date
+            {joinDate}
           </span>
         </div>
         <div className="flex justify-between outline-0 relative">
@@ -101,7 +101,7 @@ SellerInfo) {
               Products
             </label>
             <span className="text-[#d0011b] text-right whitespace-nowrap">
-              This is Product Amount
+              {productsAmount}
             </span>
           </Link>
         </div>

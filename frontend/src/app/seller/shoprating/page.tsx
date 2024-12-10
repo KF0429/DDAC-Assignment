@@ -144,14 +144,6 @@ export default function ShopRatingPage() {
           <CardTitle>Reviews</CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList>
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="toReply">To Reply</TabsTrigger>
-              <TabsTrigger value="replied">Replies</TabsTrigger>
-            </TabsList>
-          </Tabs>
-
           <Tabs
             value={activeStarFilter}
             onValueChange={setActiveStarFilter}
@@ -177,7 +169,6 @@ export default function ShopRatingPage() {
                 <TableHead>Order ID</TableHead>
                 <TableHead>Product Information</TableHead>
                 <TableHead>Buyer's Review</TableHead>
-                <TableHead>Your Reply</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -198,42 +189,6 @@ export default function ShopRatingPage() {
                       />
                     ))}
                     <p className="mt-1">{review.review}</p>
-                  </TableCell>
-                  <TableCell>
-                    {review.reply ? (
-                      <p>{review.reply}</p>
-                    ) : (
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            onClick={() => handleReply(review.id)}
-                          >
-                            <MessageSquare className="w-4 h-4 mr-2" />
-                            Reply
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Your Reply</DialogTitle>
-                          </DialogHeader>
-                          <Textarea
-                            value={replyText}
-                            onChange={(e) => setReplyText(e.target.value)}
-                            placeholder="Type your reply here..."
-                            className="mt-2"
-                          />
-                          <div className="flex justify-end mt-4">
-                            <Button
-                              className="bg-orange-500 hover:bg-orange-600 text-white"
-                              onClick={submitReply}
-                            >
-                              Confirm
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    )}
                   </TableCell>
                 </TableRow>
               ))}

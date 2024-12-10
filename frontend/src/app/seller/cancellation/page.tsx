@@ -34,7 +34,7 @@ const initialOrders = [
     products: 'Product A',
     total: '$100',
     status: 'To Ship',
-    countdown: '2 days',
+    orderDate: '01/02/2024',
     cancellationStatus: 'N/A',
   },
   {
@@ -42,7 +42,7 @@ const initialOrders = [
     products: 'Product B',
     total: '$150',
     status: 'Shipping',
-    countdown: 'N/A',
+    orderDate: '01/02/2024',
     cancellationStatus: 'To Respond',
   },
   {
@@ -50,7 +50,7 @@ const initialOrders = [
     products: 'Product C',
     total: '$200',
     status: 'Completed',
-    countdown: 'N/A',
+    orderDate: '01/02/2024',
     cancellationStatus: 'N/A',
   },
   {
@@ -58,7 +58,7 @@ const initialOrders = [
     products: 'Product D',
     total: '$175',
     status: 'Cancellation',
-    countdown: 'N/A',
+    orderDate: '01/02/2024',
     cancellationStatus: 'Cancelled',
   },
   // Add more mock orders as needed
@@ -68,7 +68,7 @@ interface Order {
   products: string;
   total: string;
   status: string;
-  countdown: string;
+  orderDate: string;
   cancellationStatus: string;
 }
 
@@ -142,7 +142,7 @@ export default function MyOrders() {
               <TableHead>Product(s)</TableHead>
               <TableHead>Order Total</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Countdown</TableHead>
+              <TableHead>Order Date</TableHead>
               <TableHead>Cancellation Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -153,7 +153,7 @@ export default function MyOrders() {
                 <TableCell>{order.products}</TableCell>
                 <TableCell>{order.total}</TableCell>
                 <TableCell>{order.status}</TableCell>
-                <TableCell>{order.countdown}</TableCell>
+                <TableCell>{order.orderDate}</TableCell>
                 <TableCell>{order.cancellationStatus}</TableCell>
                 <TableCell>
                   <Dialog>
@@ -244,17 +244,17 @@ export default function MyOrders() {
                           </Select>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="countdown" className="text-right">
-                            Countdown
+                          <Label htmlFor="orderDate" className="text-right">
+                            Order Date
                           </Label>
                           <Input
-                            id="countdown"
-                            value={editingOrder?.countdown || ''}
+                            id="orderDate"
+                            value={editingOrder?.orderDate || ''}
                             onChange={(e) =>
                               setEditingOrder(
                                 (prev) =>
                                   prev
-                                    ? { ...prev, countdown: e.target.value } // Update `countdown` while retaining all other fields
+                                    ? { ...prev, orderDate: e.target.value } // Update `orderDate` while retaining all other fields
                                     : null // Handle the case where `editingOrder` is null
                               )
                             }

@@ -1,14 +1,60 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TopNav from "../Components/Header/TopNav";
 import Footer from "../Components/General/Footer";
 import CartHeader from "../Components/ShoppingCart/CartHeader";
 import EmptyCart from "../Components/ShoppingCart/EmptyCart";
-import { Cart } from "../lib/Mock/CartData";
+// import { Cart } from "../lib/Mock/CartData";
 import CartItem from "../Components/ShoppingCart/CartItem";
 
-export default function shopingCart() {
-  const isCartEmpty = Cart.length === 0;
+interface CartItemType {
+  productID: number;
+  productName: string;
+  photo: string;
+  quantity: number;
+  unitPrice: number;
+  subTotal: number;
+  shopName: string;
+}
+interface CartData {
+  cartID: number;
+  userID: number;
+  cartItems: CartItemType[];
+}
+
+export default function ShopingCart() {
+  const [cartData, setCartData] = useState<CartData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const userId = 2; // Assuming user ID is hardcoded for now
+
+  useEffect(() => {
+    const fetchCartData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5088/api/Carts/${userId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch cart data");
+        }
+        const data: CartData = await response.json();
+        setCartData(data);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCartData();
+  }, [userId]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  const isCartEmpty = !cartData || cartData.cartItems.length === 0;
+
   return (
     <div className="flex flex-col min-h-[100vh] relative">
       <header
@@ -26,7 +72,11 @@ export default function shopingCart() {
               <CartHeader />
               {/**container */}
               <div className="ml-auto mr-auto w-[1200px]">
-                {isCartEmpty ? <EmptyCart /> : <CartItem cart={Cart} />}
+                {isCartEmpty ? (
+                  <EmptyCart />
+                ) : (
+                  <CartItem cartItems={cartData.cartItems} userID={userId} />
+                )}
               </div>
             </div>
           </div>

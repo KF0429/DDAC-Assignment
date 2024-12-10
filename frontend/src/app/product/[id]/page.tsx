@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Header from "@/app/Components/Header/Header";
-import { mockProducts } from "@/app/lib/Mock/ProductMock";
+import { SellerInfo } from "@/app/lib/Interface/SellerInfo";
+import { Product } from "@/app/lib/Interface/Product";
 import Quantitycontrol from "@/app/Components/Product/Quantitycontrol";
 import ProductDescription from "@/app/Components/Product/ProductDescription";
 import ProductComment from "@/app/Components/Product/ProductComment";
@@ -13,49 +14,108 @@ import AditionalInfo from "@/app/Components/Product/AditionalInfo";
 import TitleandRating from "@/app/Components/Product/TitleandRating";
 import ProductPriceInfo from "@/app/Components/Product/ProductPriceInfo";
 import Image from "next/image";
+import type { ProductCommenttype } from "@/app/lib/Interface/ProductCommenttype";
+import NoComment from "@/app/Components/Product/NoComment";
+export default function ProductPage({ params }: { params: { id: number } }) {
+  const [product, setProduct] = useState<Product | null>(null);
+  const [seller, setSeller] = useState<SellerInfo | null>(null);
+  const [comments, setComments] = useState<ProductCommenttype[]>([]);
 
-export default function ProductPage({ params }: { params: { id: string } }) {
-  const [product, setProduct] = useState<{
-    id: number;
-    imageUrl: string;
-    title: string;
-    price: number;
-    rating: number;
-    quantity: number;
-  } | null>(null);
-
-  const [quantity, setQuantity] = useState(1);
-  const maxQuantity = product?.quantity || 0;
+  const [stock, setQuantity] = useState(1);
+  const maxQuantity = product?.stock || 0;
   const [showAlert, setShowAlert] = useState(false);
 
+  const handleClick = async () => {
+    const userId = 2;
+    const cartItem = {
+      userID: userId,
+      productID: product?.productID,
+      quantity: stock,
+    };
+    try {
+      const cartResponse = await fetch("http://localhost:5088/api/Carts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cartItem),
+      });
+      if (!cartResponse.ok) {
+        throw new Error("Failed to add item to cart");
+      }
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 600);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add item to cart.");
+    }
+  };
   const handleDecrement = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
+    if (stock > 1) {
+      setQuantity(stock - 1);
     }
   };
   const handleIncrement = () => {
-    if (quantity < maxQuantity) {
-      setQuantity(quantity + 1);
+    if (stock < maxQuantity) {
+      setQuantity(stock + 1);
     }
   };
-  const handleClick = () => {
-    //handle alert
-    setShowAlert(true);
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 600);
-  };
-
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
-    const productId = Number(params.id);
-    const productData = mockProducts.find((item) => item.id === productId);
-    setProduct(productData || null);
+    const fetchProducts = async () => {
+      try {
+        //to gte the product by product ID
+        const response = await fetch(
+          `http://localhost:5088/api/Products/with-seller/${params.id}`
+        );
+        if (!response.ok) {
+          throw new Error(`Failed to fetch Products ${params.id}`);
+        }
+        const data = await response.json();
+        setProduct(data);
+
+        //To get the seller information by the ShopID
+        const SellerID = data.shopID;
+        const SellerResponse = await fetch(
+          `http://localhost:5088/api/Sellers/${SellerID}`
+        );
+        const sellerInfo = await SellerResponse.json();
+        setSeller(sellerInfo);
+        console.log(`the product amount is${sellerInfo.productsAmount}`);
+        //To Get the Comment
+        const CommentResponse = await fetch(
+          `http://localhost:5088/api/Comments/getCommentbyProductId/${params.id}`
+        );
+        // this 404 is when the api is not fetching any thing == comment is empty
+        if (CommentResponse.status === 404) {
+          console.warn("No comments found for this product.");
+          setComments([]);
+          return;
+        }
+        if (!CommentResponse.ok) {
+          throw new Error(`Fail to fetch Comments`);
+        }
+        const commentData: ProductCommenttype[] = await CommentResponse.json();
+        setComments(commentData);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "An unknown error occurred";
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
   }, [params.id]);
+  if (loading) return <p>Loading Product...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   if (!product) {
     return <p>Product not found.</p>;
   }
-
   return (
     <div>
       <div className="flex flex-col min-h-100vh relative">
@@ -71,28 +131,30 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                   <div className="pb-[4.375rem] ml-auto mr-auto w-[1200px]">
                     <div className="flex items-center whitespace-nowrap h-4 mt-5">
                       <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                        {product.title}
+                        {product.productName}
                       </span>
                     </div>
                     {/**product card */}
                     <section className="flex bg-white rounded-[3px] shadow-ssm mt-5 p-0">
                       <h1 className="h-[1px] m-0 overflow-hidden absolute whitespace-nowrap w-[1px] -z-[1000] text-[2em]">
-                        {product.title}
+                        {product.productName}
                       </h1>
-                      <ProductImage imageUrl={product.imageUrl} />
+                      <ProductImage imageUrl={product.photo} />
                       <section className="flex-grow flex-shrink-0 basis-auto w-0 flex">
                         <div className="border-box pt-5 pr-[35px] pb-[0px] pl-5 w-full flex-1 basis-auto">
                           <TitleandRating
-                            title={product.title}
-                            rating={product.rating}
+                            title={product.productName}
+                            rating={product.averageRating}
+                            ratingAmount={product.ratingCount}
+                            itemSold={product.soldAmount}
                           />
                           <div className="mt-[10px]">
                             <ProductPriceInfo price={product.price} />
                           </div>
                           <div className="mt-[25px] py-0 px-[20px]">
                             <Quantitycontrol
-                              quantity={quantity}
-                              maxQuantity={product.quantity}
+                              stock={stock}
+                              maxQuantity={product.stock}
                               onIncrement={handleIncrement}
                               onDecrement={handleDecrement}
                             />
@@ -111,17 +173,35 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                     </section>
                     {/**shop */}
                     <section className="pt-[1.5625rem] bg-white rounded-sm shadow-ssm mt-[.9375rem] overflow-hidden block">
-                      <ProductSeller />
+                      {seller ? (
+                        <ProductSeller
+                          shopID={seller.shopID}
+                          shopImage={seller.shopImage}
+                          shopName={seller.shopName}
+                          productsAmount={seller.productsAmount}
+                          totalRateCount={seller.totalRateCount}
+                          joinDate={seller.dateTime}
+                        />
+                      ) : (
+                        <p>loading informationi</p>
+                      )}
                     </section>
                     {/**wAMdpk */}
                     <div className="block">
                       <div className="flex min-h-[40rem]">
                         <div className="flex-1 min-w-0">
-                          <ProductDescription />
-                          {/**product rating */}
+                          <ProductDescription
+                            category={product.category}
+                            stock={product.stock}
+                            description={product.description}
+                          />
                           <div>
                             <div style={{ display: "contents" }}>
-                              <ProductComment />
+                              {comments.length > 0 ? (
+                                <ProductComment comments={comments} />
+                              ) : (
+                                <NoComment />
+                              )}
                             </div>
                           </div>
                         </div>

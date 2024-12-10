@@ -1,6 +1,11 @@
+"use client";
+import { useRouter } from "next/navigation";
 import React from "react";
-
 export default function Payment() {
+  const router = useRouter();
+  const handleCheckoutPage = () => {
+    router.push("/checkout");
+  };
   return (
     <section
       className="bottom-0 sticky z-[2] items-center bg-white box-border grid grid-cols-[1fr_20.3125rem_11.875rem] text-base
@@ -43,6 +48,7 @@ export default function Payment() {
           </div>
         </div>
         <button
+          onClick={handleCheckoutPage}
           className="rounded-sm box-border text-sm font-light h-10 my-0 mr-[22px] ml-[15px] 
         py-[13px] px-9 capitalize w-[13.125rem] bg-[#ee4d2d] outline-0 overflow-visible relative border-0
         shadow-ssm text-white cursor-pointer flex justify-center tracking-normal leading-[1] select-none

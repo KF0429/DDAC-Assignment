@@ -25,6 +25,33 @@ export default function ProductPage({ params }: { params: { id: number } }) {
   const maxQuantity = product?.stock || 0;
   const [showAlert, setShowAlert] = useState(false);
 
+  const handleClick = async () => {
+    const userId = 2;
+    const cartItem = {
+      userID: userId,
+      productID: product?.productID,
+      quantity: stock,
+    };
+    try {
+      const cartResponse = await fetch("http://localhost:5088/api/Carts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cartItem),
+      });
+      if (!cartResponse.ok) {
+        throw new Error("Failed to add item to cart");
+      }
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 600);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add item to cart.");
+    }
+  };
   const handleDecrement = () => {
     if (stock > 1) {
       setQuantity(stock - 1);
@@ -34,13 +61,6 @@ export default function ProductPage({ params }: { params: { id: number } }) {
     if (stock < maxQuantity) {
       setQuantity(stock + 1);
     }
-  };
-  const handleClick = () => {
-    //handle alert
-    setShowAlert(true);
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 600);
   };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -80,7 +100,6 @@ export default function ProductPage({ params }: { params: { id: number } }) {
         }
         const commentData: ProductCommenttype[] = await CommentResponse.json();
         setComments(commentData);
-        // console.log(commentData);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "An unknown error occurred";

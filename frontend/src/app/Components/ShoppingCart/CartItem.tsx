@@ -1,64 +1,141 @@
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
-// import Payment from "./Payment";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 interface CartItemProps {
-  cart: Array<{
-    CartID: number;
-    BuyerName: string;
-    ProductID: string;
-    ProductName: string;
-    ProductImage: string;
-    SellerName: string;
-    UnitPrice: number;
-    Quantity: number;
-    TotalPrice: number;
-  }>;
+  cartItems: {
+    productID: number;
+    productName: string;
+    photo: string;
+    quantity: number;
+    unitPrice: number;
+    subTotal: number;
+    shopName: string;
+  }[];
+  userID: number;
 }
-export default function CartItem({ cart }: CartItemProps) {
-  // const [selectAll, setSelectAll] = useState(false);
-  const [checkedItems, selectCheckedItems] = useState<{
+export default function CartItem({ cartItems, userID }: CartItemProps) {
+  const [items, setItems] = useState(cartItems);
+
+  const handleDelete = async (productID: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5088/api/Carts/${userID}/${productID}`,
+        {
+          method: "DELETE",
+        }
+      );
+      setItems((prevItems) =>
+        prevItems.filter((item) => item.productID !== productID)
+      );
+    } catch (error) {
+      console.error("Error in delete item", error);
+    }
+  };
+  const [checkedItems, setCheckedItems] = useState<{
     [key: number]: boolean;
   }>({});
+
+  const [stockData, setStockData] = useState<{ [key: number]: number }>({});
+  const [quantities, setQuantities] = useState<{ [key: number]: number }>(
+    cartItems.reduce((acc, item) => {
+      acc[item.productID] = item.quantity;
+      return acc;
+    }, {} as { [key: number]: number })
+  );
+
+  const router = useRouter();
+  useEffect(() => {
+    const fetchStockData = async () => {
+      try {
+        const stockPromises = cartItems.map(async (item) => {
+          const response = await fetch(
+            `http://localhost:5088/api/Products/with-seller/${item.productID}`
+          );
+          const product = await response.json();
+          return { productID: item.productID, stock: product.stock };
+        });
+        const stockResults = await Promise.all(stockPromises);
+        const stockMap = stockResults.reduce((acc, item) => {
+          acc[item.productID] = item.stock;
+          return acc;
+        }, {} as { [key: number]: number });
+        setStockData(stockMap);
+      } catch (error) {
+        console.error("Error fetching stock data:", error);
+      }
+    };
+    fetchStockData();
+  }, [cartItems]);
+
+  const updateQuantity = async (productID: number, newQuantity: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5088/api/Carts/updateQuantity`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ productID, quantity: newQuantity }),
+        }
+      );
+      if (!response.ok) throw new Error("Failed to update quantity");
+
+      setQuantities((prev) => ({
+        ...prev,
+        [productID]: newQuantity,
+      }));
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    }
+  };
+
+  const handleIncrement = (productID: number) => {
+    const currentQuantity = quantities[productID];
+    const maxStock = stockData[productID] || 0;
+
+    if (currentQuantity < maxStock) {
+      updateQuantity(productID, currentQuantity + 1);
+    }
+  };
+
+  const handleDecrement = (productID: number) => {
+    const currentQuantity = quantities[productID];
+
+    if (currentQuantity > 1) {
+      updateQuantity(productID, currentQuantity - 1);
+    }
+  };
   const isAllSelected =
-    cart.length > 0 && cart.every((item) => checkedItems[item.CartID]);
+    cartItems.length > 0 &&
+    cartItems.every((item) => checkedItems[item.productID]);
 
   const handleSelectAll = () => {
     const newState = !isAllSelected;
-    const updateCheckedItems = cart.reduce((acc, item) => {
-      acc[item.CartID] = newState;
+    const updatedCheckedItems = cartItems.reduce((acc, item) => {
+      acc[item.productID] = newState;
       return acc;
     }, {} as { [key: number]: boolean });
-    selectCheckedItems(updateCheckedItems);
+    setCheckedItems(updatedCheckedItems);
   };
 
-  // const handleSelectAll = () => {
-  //   setSelectAll((prev) => !prev);
-  //   const updatedCheckedItems = cart.reduce((acc, item) => {
-  //     acc[item.CartID] = !selectAll;
-  //     return acc;
-  //   }, {} as { [key: number]: boolean });
-  //   selectCheckedItems(updatedCheckedItems);
-  // };
-
   const handleCheckBoxChange = (id: number) => {
-    selectCheckedItems((prev) => ({
+    setCheckedItems((prev) => ({
       ...prev,
       [id]: !prev[id],
     }));
   };
 
-  const subtotal = cart.reduce((total, item) => {
-    if (checkedItems[item.CartID]) {
-      return total + item.UnitPrice * item.Quantity;
+  const subtotal = cartItems.reduce((total, item) => {
+    if (checkedItems[item.productID]) {
+      return total + item.unitPrice * item.quantity;
     }
     return total;
   }, 0);
 
-  const router = useRouter();
   const handleCheckoutPage = () => {
     router.push("/checkout");
   };
@@ -103,9 +180,9 @@ export default function CartItem({ cart }: CartItemProps) {
           <div className="text-center w-[10.43557%]">Total Price</div>
           <div className="text-center w-[12.70417%]">Actions</div>
         </div>
-        {cart.map((item) => (
+        {cartItems.map((item) => (
           <section
-            key={item.CartID}
+            key={item.productID} //cartid
             className="bg-white rounded-sm shadow-ssm overflow-visible mb-[.9375rem] block"
           >
             <div className="border-b border-[rgba(0,0,0,.09)] box-border h-[3.75rem] py-0 px-5 items-center flex">
@@ -117,8 +194,8 @@ export default function CartItem({ cart }: CartItemProps) {
                   >
                     <input
                       type="checkbox" // when this check box is clicked it will click all the check box inside this section
-                      checked={!!checkedItems[item.CartID]}
-                      onChange={() => handleCheckBoxChange(item.CartID)}
+                      checked={!!checkedItems[item.productID]} //cartid
+                      onChange={() => handleCheckBoxChange(item.productID)} //cartid
                       aria-checked="false"
                       className="box-border p-0 left-0 opacity-0 absolute top-0 leading-normal m-0 peer hidden"
                     />
@@ -157,8 +234,8 @@ export default function CartItem({ cart }: CartItemProps) {
                         <input
                           type="checkbox" //you miss here the prev checkbox will trigger this. and he is only checked its self if click here
                           aria-checked="false"
-                          checked={!!checkedItems[item.CartID]}
-                          onChange={() => handleCheckBoxChange(item.CartID)}
+                          checked={!!checkedItems[item.productID]}
+                          onChange={() => handleCheckBoxChange(item.productID)}
                           className="box-border p-0 left-0 opacity-0 absolute top-0 leading-normal m-0 peer hidden"
                         />
                         <div
@@ -182,7 +259,7 @@ export default function CartItem({ cart }: CartItemProps) {
                         >
                           <picture className="contents cursor-pointer">
                             <Image
-                              src={item.ProductImage}
+                              src={item.photo}
                               height={80}
                               width={80}
                               alt="productimage"
@@ -191,21 +268,21 @@ export default function CartItem({ cart }: CartItemProps) {
                         </Link>
                         <div className="leading-4 overflow-hidden flex flex-1 flex-col text-sm pt-[5px] pr-5 pb-0 pl-[10px]">
                           {/**product Name */}
-                          <Link href={""}>{item.ProductName}</Link>
+                          <Link href={""}>{item.productName}</Link>
                         </div>
                       </div>
                     </div>
                     <div className="items-center flex justify-center w-[17.24138%]">
-                      text
+                      show condition
                     </div>
                     <div className="flex-col w-[15.88022%] items-center flex justify-center">
-                      <span className="m-0">RM {item.UnitPrice}</span>
+                      <span className="m-0">RM {item.unitPrice}</span>
                     </div>
                     <div className="items-center flex flex-col justify-center w-[15.4265%]">
                       {/**Quantity Ajuster */}
                       <div className="bg-white items-center flex text-[#757575]">
                         <button
-                          // onClick={onDecrement}
+                          onClick={() => handleIncrement(item.productID)}
                           className="rounded-br-none rounded-tr-none items-center bg-transparent border border-[rgba(0,0,0,0.09)]
                                           rounded-sm fill-[rgba(0,0,0,.8)] cursor-pointer flex text-sm font-light h-8 justify-center tracking-normal leading-[1] outline-none
                                           w-8 transition duration-100 normal-case ease-sharp-motion-curve"
@@ -224,13 +301,11 @@ export default function CartItem({ cart }: CartItemProps) {
                           className="text-[#d0011b] border-l-0 border-r-0 box-border cursor-text text-base font-normal h-8 text-center w-[50px]
                                             items-center bg-transparent border border-[rgba(0,0,0,0.09)] flex justify-center tracking-normal leading-[1] outline-none ease-sharp-motion-curve"
                           type="text"
-                          // value={}
+                          value={quantities[item.productID]}
+                          readOnly
                         />
-                        <span className="h-[1px] m-0 overflow-hidden absolute whitespace-nowrap w-[1px] z-[-1000] text-[#757575]">
-                          {/* Quantity {quantity} */}
-                        </span>
                         <button
-                          // onClick={onIncrement}
+                          onClick={() => handleDecrement(item.productID)}
                           className="rounded-br-none rounded-tr-none items-center bg-transparent border border-[rgba(0,0,0,0.09)]
                                           rounded-sm fill-[rgba(0,0,0,.8)] cursor-pointer flex text-sm font-light h-8 justify-center tracking-normal leading-[1] outline-none
                                           w-8 transition duration-100 normal-case ease-sharp-motion-curve"
@@ -247,16 +322,19 @@ export default function CartItem({ cart }: CartItemProps) {
                         </button>
                       </div>
                       <div className="text-[#ee4d2d] text-[.8125rem] mt-[.3125rem]">
-                        stock
+                        {stockData[item.productID]} items left
                       </div>
                     </div>
                     <div className="items-center flex justify-center text-[#ee4d2d] w-[10.43557%]">
                       <span>
-                        RM {(item.UnitPrice * item.Quantity).toFixed(2)}
+                        RM {(item.unitPrice * item.quantity).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex-col capitalize w-[12.70417%] items-center flex justify-center">
-                      <button className="bg-none border-0 cursor-pointer normal-case overflow-visible m-0 text-inherit">
+                      <button
+                        onClick={() => handleDelete(item.productID)}
+                        className="bg-none border-0 cursor-pointer normal-case overflow-visible m-0 text-inherit focus:text-[#ee4d2d] hover:text-[#ee4d2d]"
+                      >
                         Delete
                       </button>
                     </div>

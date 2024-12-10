@@ -1,12 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Cart } from "@/app/lib/Mock/CartData";
 interface CartIconProps {
-  user: string;
+  userID: number;
 }
 
-export default function CartIcon({ user }: CartIconProps) {
-  const cartCount = Cart.filter((item) => item.BuyerName === user).length;
+export default function CartIcon({ userID }: CartIconProps) {
+  const [cartCount, setCartCount] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      try {
+        const resposne = await fetch(
+          `http://localhost:5088/api/Carts/${userID}`
+        );
+        const CartData = await resposne.json();
+        console.log(`this is user id ${userID}`);
+        console.log("this is the cart data", CartData);
+        const uniqueItemCount = (CartData.cartItems || []).length;
+        setCartCount(uniqueItemCount);
+        console.log("the total item in the cart is", uniqueItemCount);
+      } catch (error) {
+        console.error("Error in cart icon", error);
+      }
+    };
+    if (userID) {
+      fetchCartCount();
+    }
+  }, [userID]);
   return (
     <div className="relative">
       <div>

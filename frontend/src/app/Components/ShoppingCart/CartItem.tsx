@@ -17,7 +17,7 @@ interface CartItemProps {
   userID: number;
 }
 export default function CartItem({ cartItems, userID }: CartItemProps) {
-  const [items, setItems] = useState(cartItems);
+  const [, setItems] = useState(cartItems);
 
   const handleDelete = async (productID: number) => {
     try {
@@ -27,6 +27,9 @@ export default function CartItem({ cartItems, userID }: CartItemProps) {
           method: "DELETE",
         }
       );
+      if (!response.ok) {
+        throw new Error("Failed to delete item");
+      }
       setItems((prevItems) =>
         prevItems.filter((item) => item.productID !== productID)
       );
@@ -137,7 +140,11 @@ export default function CartItem({ cartItems, userID }: CartItemProps) {
   }, 0);
 
   const handleCheckoutPage = () => {
-    router.push("/checkout");
+    const selectedItems = cartItems.filter(
+      (item) => checkedItems[item.productID]
+    );
+    const encodedItems = encodeURIComponent(JSON.stringify(selectedItems));
+    router.push(`/checkout?items=${encodedItems}`);
   };
   return (
     <div>
@@ -407,10 +414,19 @@ export default function CartItem({ cartItems, userID }: CartItemProps) {
           </div>
           <button
             onClick={handleCheckoutPage}
-            className="rounded-sm box-border text-sm font-light h-10 my-0 mr-[22px] ml-[15px] 
-        py-[13px] px-9 capitalize w-[13.125rem] bg-[#ee4d2d] outline-0 overflow-visible relative border-0
-        shadow-ssm text-white cursor-pointer flex justify-center tracking-normal leading-[1] select-none
-        transition-opacity duration-200 ease-in-out"
+            disabled={
+              !Object.values(checkedItems).some((isChecked) => isChecked)
+            }
+            className={`rounded-sm box-border text-sm font-light h-10 my-0 mr-[22px] ml-[15px] 
+                        py-[13px] px-9 capitalize w-[13.125rem] outline-0 overflow-visible relative border-0
+                        shadow-ssm cursor-pointer flex justify-center tracking-normal leading-[1] select-none
+                        transition-opacity duration-200 ease-in-out ${
+                          Object.values(checkedItems).some(
+                            (isChecked) => isChecked
+                          )
+                            ? "bg-[#ee4d2d] text-white"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
           >
             <span className="w-full text-sm font-light capitalize text-white cursor-pointer tracking-normal leading-[1] select-none">
               Check Out

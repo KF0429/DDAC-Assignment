@@ -4,26 +4,10 @@ import React, { useState } from 'react';
 import Starting from '@/app/Components/Starting';
 import { useRouter } from 'next/navigation';
 
-// Simulated user database
-const mockUsers = [
-  {
-    username: 'john_doe',
-    email: 'john@example.com',
-    phone: '1234567890',
-    password: 'password123',
-  },
-  {
-    username: 'jane_smith',
-    email: 'jane@example.com',
-    phone: '0987654321',
-    password: 'password456',
-  },
-];
-
 export default function LoginPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    emailOrPhone: '',
+    phoneNumber: '',
     password: '',
   });
 
@@ -32,28 +16,46 @@ export default function LoginPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate user credentials
-    const user = mockUsers.find(
-      (user) =>
-        (user.email === formData.emailOrPhone ||
-          user.phone === formData.emailOrPhone) &&
-        user.password === formData.password
-    );
+    try {
+      const response = await fetch('http://localhost:5088/api/Users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phoneNumber: formData.phoneNumber,
+          password: formData.password,
+        }),
+      });
 
-    if (user) {
-      // Save logged-in user to localStorage
-      localStorage.setItem(
-        'loggedInUser',
-        JSON.stringify({ username: user.username })
-      );
+      if (response.ok) {
+        const data = await response.json();
 
-      alert('Login successful!');
-      router.push('/'); // Redirect to homepage/dashboard
-    } else {
-      alert('Invalid email/phone or password!');
+        // Debugging: Log the data to the browser console
+        console.log('Response Data:', data);
+        console.log('Token:', data.token);
+
+        // Save the token and username to localStorage
+        localStorage.setItem(
+          'loggedInUser',
+          JSON.stringify({
+            username: data.userName,
+            token: data.token,
+          })
+        );
+
+        alert('Login successful!');
+        router.push('/'); // Redirect to homepage/dashboard
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || 'Invalid phone number or password.');
+      }
+    } catch (err) {
+      console.error('Error during login:', err);
+      alert('An error occurred. Please try again later.');
     }
   };
 
@@ -66,22 +68,22 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <h2 className="text-2xl font-semibold text-center">Log In</h2>
 
-        {/* Email/Phone Input */}
+        {/* Phone Input */}
         <div>
           <label
-            htmlFor="emailOrPhone"
+            htmlFor="phoneNumber"
             className="block text-gray-700 font-medium mb-2"
           >
-            Phone number / Username / Email
+            Phone Number
           </label>
           <input
             type="text"
-            id="emailOrPhone"
-            name="emailOrPhone"
-            value={formData.emailOrPhone}
+            id="phoneNumber"
+            name="phoneNumber"
+            value={formData.phoneNumber}
             onChange={handleChange}
             className="w-full p-3 border rounded-md"
-            placeholder="Enter your email or phone"
+            placeholder="Enter your phone number"
             required
           />
         </div>

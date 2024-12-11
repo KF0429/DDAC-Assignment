@@ -4,6 +4,18 @@ import TopNav from "../Components/Header/TopNav";
 import CartHeader from "../Components/ShoppingCart/CartHeader";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import convertToSubcurrency from "../lib/convertToSubcurrency";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import Checkout from "../Components/Checkout/Checkout";
+
+if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
+  throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
+}
+const stripePromise = loadStripe(
+  "pk_test_51QUjwjG4pl327CYRzIzrrnaNhFvRPXTFNJMTd9kpIpfvDNJf9TOpFLDmC9LvnaWSb8nE6zK4rPGgMZDef32tVqvd002ImESkkd"
+);
+
 interface CartItemType {
   productID: number;
   productName: string;
@@ -15,11 +27,14 @@ interface CartItemType {
 }
 export default function Page() {
   const searchParams = useSearchParams();
-
   const itemsParam = searchParams.get("items");
   const selectedItems: CartItemType[] = itemsParam
     ? JSON.parse(decodeURIComponent(itemsParam))
     : [];
+  const subtotal = selectedItems.reduce(
+    (total, item) => total + item.subTotal,
+    0
+  );
 
   return (
     <div className="flex flex-col min-h-[100vh] relative">
@@ -88,13 +103,13 @@ export default function Page() {
                                     Condition Brand New or Used
                                   </div>
                                   <div className="flex-[2] justify-end items-center flex overflow-hidden text-ellipsis">
-                                    RM {item.unitPrice}
+                                    RM {item.unitPrice.toFixed(2)}
                                   </div>
                                   <div className="flex-[2] justify-end items-center flex overflow-hidden text-ellipsis">
                                     {item.quantity}
                                   </div>
                                   <div className="flex-[2] justify-end font-medium items-center flex text-ellipsis">
-                                    {item.subTotal}
+                                    {item.subTotal.toFixed(2)}
                                   </div>
                                 </div>
                               </div>
@@ -105,7 +120,7 @@ export default function Page() {
                                   className="font-medium text-[#ee4d2d] text-xl col-start-3 col-end-4 h-10 min-w-[100px] justify-end 
                             py-0 pr-[25px] pl-[10px] items-center flex"
                                 >
-                                  RM {item.subTotal}
+                                  RM {item.subTotal.toFixed(2)}
                                 </div>
                               </div>
                             </div>
@@ -131,8 +146,18 @@ export default function Page() {
                       </div>
                     </div>
                     <div className="pt-[.625rem]">
-                      <div className="pb-[1.875rem] pt-[1.875rem] box-border flex py-0 px-[1.875rem]">
+                      <div className="pb-[1.875rem] pt-[1.875rem] box-border flex py-0 px-[1.875rem] justify-center">
                         {/** do the stripe payment form at here */}
+                        <Elements
+                          stripe={stripePromise}
+                          options={{
+                            mode: "payment",
+                            amount: convertToSubcurrency(subtotal),
+                            currency: "myr",
+                          }}
+                        >
+                          <Checkout amount={subtotal} />
+                        </Elements>
                       </div>
                     </div>
                   </div>

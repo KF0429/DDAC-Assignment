@@ -1,14 +1,14 @@
-"use client";
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Footer from "../Components/Footer";
+'use client';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Footer from '../Components/Footer';
 
 export default function ShopeeCloneCarousel() {
   const images = [
-    "https://cf.shopee.com.my/file/my-11134258-7rasj-m1gs8pipzdif69_xhdpi",
-    "https://cf.shopee.com.my/file/my-11134258-7rasc-m1lj1mfx2trb00_xxhdpi",
-    "https://cf.shopee.com.my/file/my-11134258-7rasg-m1guq0oyyr6v41_xxhdpi",
-    "https://cf.shopee.com.my/file/my-11134258-7rasb-m1gui9i3j096cd_xxhdpi",
+    'https://cf.shopee.com.my/file/my-11134258-7rasj-m1gs8pipzdif69_xhdpi',
+    'https://cf.shopee.com.my/file/my-11134258-7rasc-m1lj1mfx2trb00_xxhdpi',
+    'https://cf.shopee.com.my/file/my-11134258-7rasg-m1guq0oyyr6v41_xxhdpi',
+    'https://cf.shopee.com.my/file/my-11134258-7rasb-m1gui9i3j096cd_xxhdpi',
   ]; // Replace with your image URLs
 
   const totalSlides = images.length;

@@ -1,23 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { SiShopee } from 'react-icons/si';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Import useRouter for navigation
+import { useRouter } from 'next/navigation';
 
 interface BuyerPageProps {
-  phone?: string; // Allow undefined as a valid type
+  phone?: string; // Phone number passed as a prop
 }
 
 export default function BuyerPage({ phone }: BuyerPageProps) {
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
     password: '',
-    phone: phone || '', // Pre-fill phone number if provided
-    address: '',
-    gender: '',
+    phone: phone || '', // Pre-fill phone number
   });
 
   const handleChange = (
@@ -27,26 +21,41 @@ export default function BuyerPage({ phone }: BuyerPageProps) {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Buyer Registration Data:', formData);
-    alert('Registration Successful!');
 
-    // Navigate to the login page
-    router.push('/authentication?page=login');
+    try {
+      const response = await fetch('http://localhost:5088/api/Users/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phoneNumber: formData.phone,
+          password: formData.password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Registration successful:', data);
+        alert('Registration successful!');
+        router.push('/authentication?page=login'); // Navigate to login page
+      } else {
+        const error = await response.json();
+        console.error('Registration failed:', error);
+        alert(error.Message || 'Registration failed.');
+      }
+    } catch (err) {
+      console.error('Error during registration:', err);
+      alert('An error occurred. Please try again later.');
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white py-4 shadow">
         <div className="max-w-6xl mx-auto px-4 flex items-center space-x-4">
-          {/* Shopee Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <SiShopee size={40} color="#ee4d2d" />
-            <h1 className="text-3xl font-medium text-[#ee4d2d]"></h1>
-          </Link>
-
-          {/* Registration Title */}
           <h1 className="text-xl font-semibold text-[#ee4d2d] ml-4">
             Shopee Buyer Registration
           </h1>
@@ -59,45 +68,24 @@ export default function BuyerPage({ phone }: BuyerPageProps) {
           className="w-full max-w-md p-6 bg-white rounded-md shadow-md"
         >
           <h2 className="text-2xl font-bold mb-6 text-center">
-            Complete Your Registration
+            Enter Password
           </h2>
-          {/* Username */}
+
+          {/* Phone Number (Readonly) */}
           <div className="mb-4">
             <label
-              htmlFor="username"
+              htmlFor="phone"
               className="block text-gray-700 font-medium mb-2"
             >
-              Username
+              Phone Number
             </label>
             <input
               type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="w-full p-3 border rounded-md"
-              placeholder="Enter your username"
-              required
-            />
-          </div>
-
-          {/* Email */}
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full p-3 border rounded-md"
-              placeholder="Enter your email address"
-              required
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              readOnly
+              className="w-full p-3 border rounded-md bg-gray-100"
             />
           </div>
 
@@ -119,67 +107,6 @@ export default function BuyerPage({ phone }: BuyerPageProps) {
               placeholder="Create a secure password"
               required
             />
-          </div>
-
-          {/* Phone */}
-          <div className="mb-4">
-            <label
-              htmlFor="phone"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              Phone Number
-            </label>
-            <input
-              type="text"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              readOnly
-              className="w-full p-3 border rounded-md bg-gray-100"
-              required
-            />
-          </div>
-
-          {/* Address */}
-          <div className="mb-4">
-            <label
-              htmlFor="address"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              Address
-            </label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full p-3 border rounded-md"
-              placeholder="Enter your address"
-              required
-            />
-          </div>
-
-          {/* Gender */}
-          <div className="mb-4">
-            <label
-              htmlFor="gender"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              Gender (Optional)
-            </label>
-            <select
-              id="gender"
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="w-full p-3 border rounded-md"
-            >
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
           </div>
 
           <button

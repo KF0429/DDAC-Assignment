@@ -31,7 +31,10 @@ export default function Page() {
   const selectedItems: CartItemType[] = itemsParam
     ? JSON.parse(decodeURIComponent(itemsParam))
     : [];
-  const amount = 50; // asume static for testing
+  const subtotal = selectedItems.reduce(
+    (total, item) => total + item.subTotal,
+    0
+  );
 
   return (
     <div className="flex flex-col min-h-[100vh] relative">
@@ -100,13 +103,13 @@ export default function Page() {
                                     Condition Brand New or Used
                                   </div>
                                   <div className="flex-[2] justify-end items-center flex overflow-hidden text-ellipsis">
-                                    RM {item.unitPrice}
+                                    RM {item.unitPrice.toFixed(2)}
                                   </div>
                                   <div className="flex-[2] justify-end items-center flex overflow-hidden text-ellipsis">
                                     {item.quantity}
                                   </div>
                                   <div className="flex-[2] justify-end font-medium items-center flex text-ellipsis">
-                                    {item.subTotal}
+                                    {item.subTotal.toFixed(2)}
                                   </div>
                                 </div>
                               </div>
@@ -117,7 +120,7 @@ export default function Page() {
                                   className="font-medium text-[#ee4d2d] text-xl col-start-3 col-end-4 h-10 min-w-[100px] justify-end 
                             py-0 pr-[25px] pl-[10px] items-center flex"
                                 >
-                                  RM {item.subTotal}
+                                  RM {item.subTotal.toFixed(2)}
                                 </div>
                               </div>
                             </div>
@@ -149,11 +152,11 @@ export default function Page() {
                           stripe={stripePromise}
                           options={{
                             mode: "payment",
-                            amount: convertToSubcurrency(amount),
-                            currency: "usd",
+                            amount: convertToSubcurrency(subtotal),
+                            currency: "myr",
                           }}
                         >
-                          <Checkout amount={amount} />
+                          <Checkout amount={subtotal} />
                         </Elements>
                       </div>
                     </div>

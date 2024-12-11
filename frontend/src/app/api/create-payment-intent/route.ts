@@ -4,9 +4,6 @@ import Stripe from "stripe";
 const stripe = new Stripe(
   "sk_test_51QUjwjG4pl327CYRJ0XE7IfW47COuSxULqaPJeVe4THJRxUGRouTnip7sETq5kQDkS1YdR9XLRiOC5w9evuBM1eJ009tCq2OSi" // Use the correct API version
 );
-// const stripe = require("stripe")(
-//   "sk_test_51QUjwjG4pl327CYRJ0XE7IfW47COuSxULqaPJeVe4THJRxUGRouTnip7sETq5kQDkS1YdR9XLRiOC5w9evuBM1eJ009tCq2OSi"
-// );
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +11,7 @@ export async function POST(request: NextRequest) {
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
-      currency: "usd",
+      currency: "myr",
       automatic_payment_methods: { enabled: true },
     });
     return NextResponse.json({ clientSecret: paymentIntent.client_secret });

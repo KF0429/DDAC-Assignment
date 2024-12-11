@@ -64,7 +64,7 @@ const Checkout = ({ amount }: { amount: number }) => {
         className="text-white w-full p-3 bg-[#ee4d2d] mt-2 rounded-sm font-bold
       disabled:opacity-50 disabled:animate-pulse"
       >
-        Pay
+        {!loading ? `Pay RM ${amount.toFixed(2)}` : "Processing..."}
       </button>
     </form>
   );

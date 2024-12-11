@@ -15,7 +15,7 @@ export default function TopNav() {
     // Retrieve the logged-in user from local storage
     const user = localStorage.getItem('loggedInUser');
     if (user) {
-      setLoggedInUser(JSON.parse(user));
+      setLoggedInUser(JSON.parse(user)); // Parse the JSON and update state
     }
   }, []);
 
@@ -45,14 +45,12 @@ export default function TopNav() {
         <div className="flex-1"></div>
         <ul className="items-center flex h-[2.125rem] list-none m-0 p-0">
           {loggedInUser ? (
-            // Display UserDropdown for logged-in users
             <UserDropdown
-              username={loggedInUser.username}
+              username={loggedInUser.username} // Pass username to dropdown
               handleLogout={handleLogout}
             />
           ) : (
             <>
-              {/* Sign Up Link */}
               <Link
                 href={'/authentication?page=register'}
                 className="cursor-pointer text-current normal-case font-medium items-center flex text-[.8125rem] select-none justify-center py-0 px-2.5 relative no-underline list-none"
@@ -60,7 +58,6 @@ export default function TopNav() {
                 Sign Up
               </Link>
               <div className="border-r border-customhsla h-[.8125rem] list-none text-white"></div>
-              {/* Login Link */}
               <Link
                 href={'/authentication?page=login'}
                 className="cursor-pointer text-current normal-case font-medium items-center flex text-[.8125rem] select-none justify-center py-0 px-2.5 relative no-underline list-none"

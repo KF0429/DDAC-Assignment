@@ -8,7 +8,7 @@ import { useSearchParams } from 'next/navigation';
 const BuyerPage = dynamic(() => import('./buyerinfo'));
 const LoginPage = dynamic(() => import('./login'));
 const RegisterPage = dynamic(() => import('./register'));
-const VerificationPage = dynamic(() => import('./verification'));
+const VerificationPage = dynamic(() => import('./Components/verification'));
 
 export default function Authentication() {
   const searchParams = useSearchParams();

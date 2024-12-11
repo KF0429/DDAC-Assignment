@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -13,60 +13,55 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 
-// Mock data for products
-const mockProducts = [
-  {
-    id: 1,
-    name: 'Product A',
-    price: 19.99,
-    stock: 100,
-    sales: 50,
-    status: 'Live',
-  },
-  {
-    id: 2,
-    name: 'Product B',
-    price: 29.99,
-    stock: 75,
-    sales: 25,
-    status: 'Live',
-  },
-  {
-    id: 3,
-    name: 'Product C',
-    price: 39.99,
-    stock: 0,
-    sales: 100,
-    status: 'Sold out',
-  },
-  {
-    id: 4,
-    name: 'Product D',
-    price: 49.99,
-    stock: 50,
-    sales: 0,
-    status: 'Reviewing',
-  },
-  {
-    id: 5,
-    name: 'Product E',
-    price: 59.99,
-    stock: 25,
-    sales: 10,
-    status: 'Delisted',
-  },
-  // Add more mock products as needed
-];
+type Product = {
+  id: number;
+  productName: string;
+  price: number;
+  stock: number;
+  soldAmount: number;
+  sellStatus: ProductStatus;
+};
 
 type ProductStatus = 'All' | 'Live' | 'Sold out' | 'Reviewing' | 'Delisted';
 
 export default function MyProducts() {
   const [selectedStatus, setSelectedStatus] = useState<ProductStatus>('All');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const userId = 1;
+  const shopId = 2;
 
   const filteredProducts =
     selectedStatus === 'All'
-      ? mockProducts
-      : mockProducts.filter((product) => product.status === selectedStatus);
+      ? products
+      : products.filter((product) => product.sellStatus === selectedStatus);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const response = await fetch(`http://localhost:5088/api/Products/MyProduct/${shopId}`); 
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unexpected error occurred');
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="space-y-6 min-h-screen p-6">
@@ -121,10 +116,10 @@ export default function MyProducts() {
           <TableBody>
             {filteredProducts.map((product) => (
               <TableRow key={product.id} className="hover:bg-orange-50">
-                <TableCell className="font-medium">{product.name}</TableCell>
+                <TableCell className="font-medium">{product.productName}</TableCell>
                 <TableCell>${product.price.toFixed(2)}</TableCell>
                 <TableCell>{product.stock}</TableCell>
-                <TableCell>{product.sales}</TableCell>
+                <TableCell>{product.soldAmount}</TableCell>
               </TableRow>
             ))}
           </TableBody>

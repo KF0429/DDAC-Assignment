@@ -14,15 +14,6 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Trash2 } from 'lucide-react';
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -87,10 +78,6 @@ const categories = {
 
 export default function AddProduct() {
   const router = useRouter();
-  const [showWholesale, setShowWholesale] = useState(false);
-  const [priceTiers, setPriceTiers] = useState<
-    { min: string; max: string; price: string }[]
-  >([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(
     null
@@ -100,18 +87,10 @@ export default function AddProduct() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-    setSelectedSubcategory(null);
-  };
-
-  const handleSubcategoryChange = (subcategory: string) => {
-    setSelectedSubcategory(subcategory);
-  };
-
   const handleConfirm = () => {
     if (selectedCategory && selectedSubcategory) {
       setDisplayedCategory(`${selectedCategory} > ${selectedSubcategory}`);
+      setCategory(`${selectedCategory} > ${selectedSubcategory}`);
       setIsDialogOpen(false);
     }
   };
@@ -131,25 +110,66 @@ export default function AddProduct() {
     );
   }, [searchQuery]);
 
-  const addPriceTier = () => {
-    setPriceTiers([...priceTiers, { min: '', max: '', price: '' }]);
-    setShowWholesale(true);
-  };
+  const [productName, setProductName] = useState('');
+  const [condition, setCondition] = useState('');
+  const [price, setPrice] = useState('');
+  const [stock, setStock] = useState('');
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [category, setCategory] = useState('');
+  const [description, setDescription] = useState('');
+  const shopId = 2; // Static ShopID
+  const sellStatus = 'Reviewing'; // Default status
 
-  const updatePriceTier = (
-    index: number,
-    field: 'min' | 'max' | 'price',
-    value: string
-  ) => {
-    const newTiers = [...priceTiers];
-    newTiers[index][field] = value;
-    setPriceTiers(newTiers);
-  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const removePriceTier = (index: number) => {
-    const newTiers = priceTiers.filter((_, i) => i !== index);
-    setPriceTiers(newTiers);
-    if (newTiers.length === 0) setShowWholesale(false);
+    if (
+      !productName ||
+      !condition ||
+      !price ||
+      !stock ||
+      !photo ||
+      !category ||
+      !description
+    ) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    const productData = {
+      ShopID: shopId,
+      ProductName: productName,
+      Condition: condition,
+      Photo: JSON.stringify(photo),
+      Price: price,
+      Stock: stock,
+      Category: category,
+      Description: description,
+      SellStatus: sellStatus,
+    };
+
+    try {
+      const response = await fetch(
+        'http://localhost:5088/api/Products/CreateProduct',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productData),
+        }
+      );
+
+      if (response.ok) {
+        alert('Product created successfully!');
+        router.push('/seller/myproduct'); // Redirect to the products page
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to create product: ${errorData.message}`);
+      }
+    } catch (error) {
+      alert('An error occurred while creating the product');
+    }
   };
 
   return (
@@ -160,12 +180,22 @@ export default function AddProduct() {
 
           <div className="space-y-2">
             <Label htmlFor="product-images">Product Images</Label>
-            <Input id="product-images" type="file" multiple accept="image/*" />
+            <Input
+              id="product-images"
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="product-name">Product Name</Label>
-            <Input id="product-name" placeholder="Enter product name" />
+            <Input
+              id="product-name"
+              placeholder="Enter product name"
+              onChange={(e) => setProductName(e.target.value)}
+            />
           </div>
 
           <div className="space-y-2">
@@ -175,7 +205,7 @@ export default function AddProduct() {
                 <DialogTrigger asChild>
                   <Button variant="outline">{displayedCategory}</Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[425px] bg-white">
                   <DialogHeader>
                     <DialogTitle>Edit Category</DialogTitle>
                   </DialogHeader>
@@ -188,7 +218,11 @@ export default function AddProduct() {
                     <ScrollArea className="h-[300px] pr-4">
                       <RadioGroup
                         value={selectedCategory || ''}
-                        onValueChange={handleCategoryChange}
+                        onValueChange={(category) => {
+                          setSelectedCategory(category); // Save category
+                          setCategory(category);
+                          setDisplayedCategory(category); // Optionally update displayed text
+                        }}
                       >
                         {Object.entries(filteredCategories).map(
                           ([category, subcategories]) => (
@@ -207,7 +241,13 @@ export default function AddProduct() {
                               {selectedCategory === category && (
                                 <RadioGroup
                                   value={selectedSubcategory || ''}
-                                  onValueChange={handleSubcategoryChange}
+                                  onValueChange={(subcategory) => {
+                                    setSelectedSubcategory(subcategory); // Save subcategory
+                                    setCategory(`${category} > ${subcategory}`);
+                                    setDisplayedCategory(
+                                      `${category} > ${subcategory}`
+                                    ); // Update displayed text
+                                  }}
                                   className="ml-4 mt-2"
                                 >
                                   {subcategories.map((subcategory) => (
@@ -251,12 +291,14 @@ export default function AddProduct() {
             <Textarea
               id="product-description"
               placeholder="Enter product description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="product-condition">Product Condition</Label>
-            <Select>
+            <Select onValueChange={(value) => setCondition(value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select condition" />
               </SelectTrigger>
@@ -273,7 +315,13 @@ export default function AddProduct() {
 
           <div className="space-y-2">
             <Label htmlFor="product-price">Price</Label>
-            <Input id="product-price" type="number" placeholder="Enter price" />
+            <Input
+              id="product-price"
+              type="number"
+              placeholder="Enter price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
           </div>
 
           <div className="space-y-2">
@@ -282,87 +330,10 @@ export default function AddProduct() {
               id="product-stock"
               type="number"
               placeholder="Enter stock quantity"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
             />
           </div>
-
-          {!showWholesale && (
-            <Button
-              type="button"
-              onClick={addPriceTier}
-              className="bg-orange-500 hover:bg-orange-600 text-white"
-            >
-              + Add Price Tier
-            </Button>
-          )}
-
-          {showWholesale && (
-            <div className="space-y-4">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>No.</TableHead>
-                    <TableHead>Min Quantity</TableHead>
-                    <TableHead>Max Quantity</TableHead>
-                    <TableHead>Unit Price</TableHead>
-                    <TableHead>Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {priceTiers.map((tier, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">
-                        Price Tier {index + 1}
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          type="number"
-                          value={tier.min}
-                          onChange={(e) =>
-                            updatePriceTier(index, 'min', e.target.value)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          type="number"
-                          value={tier.max}
-                          onChange={(e) =>
-                            updatePriceTier(index, 'max', e.target.value)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          type="number"
-                          value={tier.price}
-                          onChange={(e) =>
-                            updatePriceTier(index, 'price', e.target.value)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          onClick={() => removePriceTier(index)}
-                          className="text-orange-500 hover:text-orange-700"
-                        >
-                          <Trash2 size={20} />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <Button
-                type="button"
-                onClick={addPriceTier}
-                className="bg-orange-500 hover:bg-orange-600 text-white"
-              >
-                + Add Another Price Tier
-              </Button>
-            </div>
-          )}
         </div>
 
         <div className="flex justify-end space-x-4">
@@ -377,6 +348,7 @@ export default function AddProduct() {
           <Button
             type="submit"
             className="bg-orange-500 hover:bg-orange-600 text-white"
+            onClick={handleSubmit}
           >
             Save and Publish
           </Button>

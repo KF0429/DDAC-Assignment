@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -18,7 +18,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -27,39 +26,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-// Mock data for the table
-const initialOrders = [
-  {
-    id: '1',
-    products: 'Product A',
-    total: '$100',
-    status: 'To Ship',
-    orderDate: '01/02/2024',
-  },
-  {
-    id: '2',
-    products: 'Product B',
-    total: '$150',
-    status: 'Shipping',
-    orderDate: '03/04/2024',
-  },
-  {
-    id: '3',
-    products: 'Product C',
-    total: '$200',
-    status: 'Completed',
-    orderDate: '05/06/2024',
-  },
-  // Add more mock orders as needed
-];
-
-interface Order {
-  id: string;
-  products: string;
-  total: string;
-  status: string;
+type Order = {
+  orderID: number;
+  userID: number;
   orderDate: string;
-}
+  status: string;
+  productName: string;
+  total: number;
+};
 
 type viewOptions =
   | 'All'
@@ -71,28 +45,87 @@ type viewOptions =
   | 'Failed Delivery';
 
 export default function MyOrders() {
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true); // To track loading state
+  const [error, setError] = useState<string | null>(null);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<viewOptions>('All');
+  const userId = 1;
 
-  const filteredOrders =
-    selectedStatus === 'All'
-      ? initialOrders
-      : initialOrders.filter((product) => product.status === selectedStatus);
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `http://localhost:5088/api/Orders/Seller/MyOrder/${userId}`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch orders');
+        }
+        const data = await response.json();
+        setOrders(data);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unexpected error occurred');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleEdit = (order: Order) => {
-    setEditingOrder({ ...order });
+    fetchOrders();
+  }, [userId]);
+
+  const updateOrderStatus = async (orderId: number, newStatus: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5088/api/Orders/${orderId}/status`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newStatus),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to update order status');
+      }
+
+      const result = await response.json();
+      console.log(result.Message);
+
+      // Update the order status locally
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.orderID === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleSave = () => {
     if (editingOrder) {
-      setOrders(
-        orders.map((order) =>
-          order.id === editingOrder.id ? editingOrder : order
-        )
-      );
+      updateOrderStatus(editingOrder.orderID, editingOrder.status);
     }
     setEditingOrder(null);
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  const filteredOrders =
+    selectedStatus === 'All'
+      ? orders
+      : orders.filter((x) => x.status === selectedStatus);
+
+  const handleEdit = (order: Order) => {
+    setEditingOrder({ ...order });
   };
 
   return (
@@ -150,11 +183,11 @@ export default function MyOrders() {
           </TableHeader>
           <TableBody>
             {filteredOrders.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell>{order.products}</TableCell>
+              <TableRow key={order.orderID}>
+                <TableCell>{order.productName}</TableCell>
                 <TableCell>{order.total}</TableCell>
                 <TableCell>{order.status}</TableCell>
-                <TableCell>{order.orderDate}</TableCell>
+                <TableCell>{order.orderDate.toString()}</TableCell>
                 <TableCell>
                   <Dialog>
                     <DialogTrigger asChild>
@@ -162,7 +195,7 @@ export default function MyOrders() {
                         Edit
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="sm:max-w-[425px] bg-white">
                       <DialogHeader>
                         <DialogTitle>Edit Order</DialogTitle>
                       </DialogHeader>
@@ -171,40 +204,17 @@ export default function MyOrders() {
                           <Label htmlFor="products" className="text-right">
                             Products
                           </Label>
-                          <Input
-                            id="products"
-                            value={editingOrder?.products || ''}
-                            onChange={(e) =>
-                              setEditingOrder(
-                                (prev) =>
-                                  prev
-                                    ? {
-                                        ...prev,
-                                        products: e.target.value,
-                                      }
-                                    : null // Ensure fallback to null if editingOrder is null
-                              )
-                            }
-                            className="col-span-3"
-                          />
+                          <Label className="col-span-3">
+                            {editingOrder?.productName || ''}
+                          </Label>
                         </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
+                        <div className="grid grid-cols-4 items-center gap-4 mt-1">
                           <Label htmlFor="total" className="text-right">
                             Total
                           </Label>
-                          <Input
-                            id="total"
-                            value={editingOrder?.total || ''}
-                            onChange={(e) =>
-                              setEditingOrder(
-                                (prev) =>
-                                  prev
-                                    ? { ...prev, total: e.target.value } // Ensure we only modify a valid `editingOrder`
-                                    : null // Handle the case where `editingOrder` is null
-                              )
-                            }
-                            className="col-span-3"
-                          />
+                          <Label className="col-span-3">
+                            {editingOrder?.total || ''}
+                          </Label>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                           <Label htmlFor="status" className="text-right">
@@ -240,23 +250,13 @@ export default function MyOrders() {
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
+                        <div className="grid grid-cols-4 items-center gap-4 mt-1">
                           <Label htmlFor="orderDate" className="text-right">
                             Order Date
                           </Label>
-                          <Input
-                            id="orderDate"
-                            value={editingOrder?.orderDate || ''}
-                            onChange={(e) =>
-                              setEditingOrder(
-                                (prev) =>
-                                  prev
-                                    ? { ...prev, orderDate: e.target.value } // Update `orderDate` while retaining all other fields
-                                    : null // Handle the case where `editingOrder` is null
-                              )
-                            }
-                            className="col-span-3"
-                          />
+                          <Label className="col-span-3">
+                            {editingOrder?.orderDate || ''}
+                          </Label>
                         </div>
                       </div>
                       <div className="flex justify-end">

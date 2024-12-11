@@ -15,6 +15,7 @@ import TitleandRating from "@/app/Components/Product/TitleandRating";
 import ProductPriceInfo from "@/app/Components/Product/ProductPriceInfo";
 import Image from "next/image";
 import type { ProductCommenttype } from "@/app/lib/Interface/ProductCommenttype";
+import NoComment from "@/app/Components/Product/NoComment";
 export default function ProductPage({ params }: { params: { id: number } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [seller, setSeller] = useState<SellerInfo | null>(null);
@@ -24,6 +25,33 @@ export default function ProductPage({ params }: { params: { id: number } }) {
   const maxQuantity = product?.stock || 0;
   const [showAlert, setShowAlert] = useState(false);
 
+  const handleClick = async () => {
+    const userId = 2;
+    const cartItem = {
+      userID: userId,
+      productID: product?.productID,
+      quantity: stock,
+    };
+    try {
+      const cartResponse = await fetch("http://localhost:5088/api/Carts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cartItem),
+      });
+      if (!cartResponse.ok) {
+        throw new Error("Failed to add item to cart");
+      }
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 600);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add item to cart.");
+    }
+  };
   const handleDecrement = () => {
     if (stock > 1) {
       setQuantity(stock - 1);
@@ -34,18 +62,12 @@ export default function ProductPage({ params }: { params: { id: number } }) {
       setQuantity(stock + 1);
     }
   };
-  const handleClick = () => {
-    //handle alert
-    setShowAlert(true);
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 600);
-  };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        //to gte the product by product ID
         const response = await fetch(
           `http://localhost:5088/api/Products/with-seller/${params.id}`
         );
@@ -54,24 +76,30 @@ export default function ProductPage({ params }: { params: { id: number } }) {
         }
         const data = await response.json();
         setProduct(data);
+
+        //To get the seller information by the ShopID
         const SellerID = data.shopID;
-        console.log(data.shopID);
         const SellerResponse = await fetch(
           `http://localhost:5088/api/Sellers/${SellerID}`
         );
-
         const sellerInfo = await SellerResponse.json();
         setSeller(sellerInfo);
-        console.log(sellerInfo);
+        console.log(`the product amount is${sellerInfo.productsAmount}`);
+        //To Get the Comment
         const CommentResponse = await fetch(
           `http://localhost:5088/api/Comments/getCommentbyProductId/${params.id}`
         );
+        // this 404 is when the api is not fetching any thing == comment is empty
+        if (CommentResponse.status === 404) {
+          console.warn("No comments found for this product.");
+          setComments([]);
+          return;
+        }
         if (!CommentResponse.ok) {
           throw new Error(`Fail to fetch Comments`);
         }
         const commentData: ProductCommenttype[] = await CommentResponse.json();
         setComments(commentData);
-        console.log(commentData);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "An unknown error occurred";
@@ -147,8 +175,12 @@ export default function ProductPage({ params }: { params: { id: number } }) {
                     <section className="pt-[1.5625rem] bg-white rounded-sm shadow-ssm mt-[.9375rem] overflow-hidden block">
                       {seller ? (
                         <ProductSeller
+                          shopID={seller.shopID}
                           shopImage={seller.shopImage}
                           shopName={seller.shopName}
+                          productsAmount={seller.productsAmount}
+                          totalRateCount={seller.totalRateCount}
+                          joinDate={seller.dateTime}
                         />
                       ) : (
                         <p>loading informationi</p>
@@ -165,7 +197,11 @@ export default function ProductPage({ params }: { params: { id: number } }) {
                           />
                           <div>
                             <div style={{ display: "contents" }}>
-                              <ProductComment comments={comments} />
+                              {comments.length > 0 ? (
+                                <ProductComment comments={comments} />
+                              ) : (
+                                <NoComment />
+                              )}
                             </div>
                           </div>
                         </div>

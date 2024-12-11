@@ -36,6 +36,9 @@ export default function Main() {
     };
     fetchProducts();
   }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
   return (
     <div>
       <div className="flex flex-col min-h-screen relative">
@@ -54,10 +57,6 @@ export default function Main() {
                 <div className="ml-auto mr-auto w-[1200px] opacity-100">
                   {" "}
                   {/**Here is main contents */}
-                  <div>
-                    <div style={{ marginTop: "20px", height: "110px" }}></div>
-                  </div>
-                  {/**this is the new user banner */}
                   <div className="min-h-[50rem]">
                     {/**Categories Section */}
                     <div className="bg-white mt-5 min-h-[18.875rem]">

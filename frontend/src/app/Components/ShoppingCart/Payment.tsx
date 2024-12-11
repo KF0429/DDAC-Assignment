@@ -1,30 +1,8 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React from "react";
-interface PaymentProps {
-  cart: Array<{
-    CartID: number;
-    UnitPrice: number;
-    Quantity: number;
-  }>;
-  checkedItems: { [key: number]: boolean };
-  selectAll: boolean;
-  handleSelectAll: () => void;
-}
-
-export default function Payment({
-  cart,
-  checkedItems,
-  selectAll,
-  handleSelectAll,
-}: PaymentProps) {
+export default function Payment() {
   const router = useRouter();
-  const subtotal = cart.reduce((total, item) => {
-    if (checkedItems[item.CartID]) {
-      return total + item.UnitPrice * item.Quantity;
-    }
-    return total;
-  }, 0);
   const handleCheckoutPage = () => {
     router.push("/checkout");
   };
@@ -39,13 +17,11 @@ export default function Payment({
             <input
               type="checkbox"
               tabIndex={0}
-              checked={selectAll}
-              onChange={handleSelectAll}
-              className="box-border p-0 left-0 opacity-0 absolute top-0 m-0 peer hidden"
+              className="box-border p-0 left-0 opacity-0 absolute top-0 m-0"
             />
             <div
               className="border border-[rgba(0,0,0,.14)] rounded-sm shadow-[0,2px,0,0_rgba(0,0,0.02)] flex-shrink-0 h-4 
-                                mr-2 relative text-center select-none w-4 peer-checked::bg-[#ee4d2d] peer-checked:border-[#ee4d2d] after:hover:shadow-none"
+                                mr-2 relative text-center select-none w-4 after:bg-[#ee4d2d] after:border-[#ee4d2d] after:hover:shadow-none"
             ></div>
           </label>
         </div>
@@ -64,7 +40,7 @@ export default function Payment({
                     Total item:
                   </div>
                   <div className="text-[#ee4d2d] text-2xl leading-7 ml-[5px]">
-                    RM {subtotal.toFixed(2)}
+                    RM XXXXX
                   </div>
                 </div>
               </div>

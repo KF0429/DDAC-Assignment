@@ -32,7 +32,7 @@ export default function ActionButton({
                                   items-center border-0 rounded-sm shadow-ssm box-border cursor-pointer flex flex-col justify-center capitalize
                                   max-w-none text-sm min-w-[180px] m-0"
         >
-          <div>Buy With Voucher</div>
+          <div>Buy Now</div>
           <div className="text-lg font-medium text-white capitalize">
             RM{price.toFixed(2)}
           </div>

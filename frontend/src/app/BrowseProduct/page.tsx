@@ -1,7 +1,36 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import StickyHeader from "../Components/StickyHeader";
+import ProductCard from "../Components/ProductCard";
+import { Product } from "../lib/Interface/ProductCard";
 
-export default function page() {
+export default function Page() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:5088/api/Products");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch Products");
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "An unknown error occurred";
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
   return (
     <div className="flex flex-col min-h-[100vh] relative">
       <StickyHeader isFixed={false} />
@@ -21,8 +50,24 @@ export default function page() {
                 </h1>
                 <hr className="border-t-[rgba(0,0,0,.26] border-dotted left-0 m-0 absolute top-1/2 w-full h-0" />
               </div>
-              {/**product card */}
-              <div className="py-10 px-0 box-border flex flex-row flex-wrap -ml-[.3125rem] -mr-[.3125rem]"></div>
+
+              <div className="py-10 px-0 box-border flex flex-row flex-wrap -ml-[.3125rem] -mr-[.3125rem]">
+                {products.map((product, index) => (
+                  <div
+                    key={index}
+                    className="box-border p-[.3125rem] w-[16.66667%]"
+                  >
+                    <ProductCard
+                      // key={product.id}
+                      productID={product.productID}
+                      photo={product.photo}
+                      productName={product.productName}
+                      price={product.price}
+                      averageRating={product.averageRating}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

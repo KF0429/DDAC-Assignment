@@ -5,7 +5,7 @@ import Link from "next/link";
 import SearchBar from "./SearchBar";
 
 export default function Header() {
-  const user = "kf";
+  const user = 2;
   return (
     <div>
       <header className="bg-transparent min-w-[1200px]">
@@ -44,7 +44,7 @@ export default function Header() {
               <div className="items-center flex relative w-[36.875rem]">
                 <form action=""></form>
                 <div className="items-center flex flex-1 justify-end">
-                  <CartIcon user={user} />
+                  <CartIcon userID={user} />
                 </div>
               </div>
             </div>

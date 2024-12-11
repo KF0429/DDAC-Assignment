@@ -1,16 +1,48 @@
 "use client";
 import React from "react";
-import { useState } from "react";
-import { mockSeller } from "@/app/lib/Mock/SellerInformation";
+import { useState, useEffect } from "react";
 
-export default function Categoryfilter() {
+interface categoriesType {
+  shopID: number;
+}
+export default function Categoryfilter({ shopID }: categoriesType) {
   const [selectedCategory, setSelectedCategory] = useState("All Products");
+  const [categories, setCategories] = useState<string[]>(["All Products"]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5088/api/Sellers/${shopID}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories");
+        }
+        const data = await response.json();
+        console.log("this is the data from filter component", data);
+        setCategories(["All Products", ...data.productCategory.split(",")]);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, [shopID]);
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
   };
 
-  const categories = ["All Products", ...mockSeller[0].Category];
+  if (loading) return <div>Loading categories...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  // const categories = ["All Products", ...mockSeller[0].Category];
   return (
     <div className=" flex-grow-0 flex-shrink-0 basis-[11.25rem] mr-[1.375rem] overflow-hidden">
       <div
@@ -21,7 +53,7 @@ export default function Categoryfilter() {
           viewBox="0 0 12 10"
           className="mr-[.625rem] w-[.75rem] inline-block h-[1em] text-current relative"
         >
-          <g fillRule="evenodd" stroke="none" stroke-width="1">
+          <g fillRule="evenodd" stroke="none" strokeWidth="1">
             <g transform="translate(-373 -208)">
               <g transform="translate(155 191)">
                 <g transform="translate(218 17)">

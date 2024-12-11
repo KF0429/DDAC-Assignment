@@ -1,21 +1,23 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { SellerInfo } from "@/app/lib/Interface/SellerInfo";
-// interface sellerinfo {
-//   ShopImage : string;
-//   ShopName : string;
-//   // ratingAmount: number;
-//   // JoinDate: string;
-//   // products: number;
-// }
+
+interface sellerinfo {
+  shopID: number;
+  shopImage: string;
+  shopName: string;
+  totalRateCount: number;
+  joinDate: string;
+  productsAmount: number;
+}
 export default function ProductSeller({
+  shopID,
   shopImage,
   shopName,
-}: // ratingAmount,
-// JoinDate,
-// products,
-SellerInfo) {
+  totalRateCount,
+  joinDate,
+  productsAmount,
+}: sellerinfo) {
   return (
     <div className="items-center flex  justify-between overflow-visible pt-5 px-[25px] pb-[25px]">
       <div className=" border-r border-r-[rgba(0,0,0,.05)] box-border flex max-w-[440px] pr-[25px]">
@@ -58,7 +60,7 @@ SellerInfo) {
             <Link
               className="flex-row capitalize text-[#555] bg-white border border-[rgba(0,0,0,.09] shadow-ssm outline-0 overflow-visible relative
             h-[34px] max-w-[190px] min-w-[60px] py-0 px-[15px] inline-flex text-ellipsis items-center box-border cursor-pointer text-sm justify-center"
-              href={`/shop/{shopName}`}
+              href={`/shop/${shopID}`}
             >
               <Image
                 src={
@@ -84,7 +86,7 @@ SellerInfo) {
             Ratings
           </label>
           <span className="text-[#d0011b] text-right whitespace-nowrap">
-            this is Rating
+            {totalRateCount}
           </span>
         </div>
         <div className="flex justify-between outline-0 relative">
@@ -92,7 +94,7 @@ SellerInfo) {
             Join Date
           </label>
           <span className="text-[#d0011b] text-right whitespace-nowrap">
-            this is Join Date
+            {joinDate}
           </span>
         </div>
         <div className="flex justify-between outline-0 relative">
@@ -101,7 +103,7 @@ SellerInfo) {
               Products
             </label>
             <span className="text-[#d0011b] text-right whitespace-nowrap">
-              This is Product Amount
+              {productsAmount}
             </span>
           </Link>
         </div>

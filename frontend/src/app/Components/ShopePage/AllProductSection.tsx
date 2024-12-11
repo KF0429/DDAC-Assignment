@@ -13,7 +13,7 @@ export default function AllProductSection() {
             viewBox="0 0 12 10"
             className="mr-[.625rem] w-[.75rem] inline-block h-[1em] text-current relative"
           >
-            <g fillRule="evenodd" stroke="none" stroke-width="1">
+            <g fillRule="evenodd" stroke="none" strokeWidth="1">
               <g transform="translate(-373 -208)">
                 <g transform="translate(155 191)">
                   <g transform="translate(218 17)">

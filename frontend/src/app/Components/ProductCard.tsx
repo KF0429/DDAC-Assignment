@@ -10,34 +10,22 @@ export default function ProductCard({
   price,
   averageRating,
 }: Product) {
-  console.log("ProductCard Props:", {
-    productID,
-    photo,
-    productName,
-    price,
-    averageRating,
-  });
-  // const handleClick = () => {
-  //   sessionStorage.setItem("productTitle", productName);
-  //   sessionStorage.setItem("productImageUrl", photo);
-  // };
   return (
     <div>
       <div className="contents">
         <div
           className="h-full box-content border relative ease-sharp-motion-curve
-                   border-solid border-[(rgba(0, 0, 0, 0.09))] duration-100
-                   hover:shadow-hover active:shadow-active hover:translate-y-[1px] active:translate-y-0 box-content
+                   border-solid border-[rgba(0,0,0,.09)] duration-100
+                   hover:shadow-hover active:shadow-active hover:translate-y-[1px] active:translate-y-0 
                    hover:z-[1] hover:border-[#ee4d2d]"
           aria-hidden="true"
         >
           <Link
             href={`/product/${productID}`}
-            // onClick={handleClick}
             prefetch={true}
             className="contents"
           >
-            <div className="flex h-full cursor-pointer flex-col bg-white">
+            <div className="flex h-full cursor-pointer flex-col bg-white border-[rgba(229,231,235)]">
               <div className="relative z-0 w-full pt-[100%]">
                 <Image
                   src={photo}

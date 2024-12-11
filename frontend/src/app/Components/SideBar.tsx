@@ -17,9 +17,9 @@ export default function SideBar() {
             <polyline
               fill="none"
               points="5.5 13.2 5.5 5.8 1.5 1.2 13.5 1.2 9.5 5.8 9.5 10.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-miterlimit="10"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeMiterlimit="10"
             ></polyline>
           </g>
         </svg>

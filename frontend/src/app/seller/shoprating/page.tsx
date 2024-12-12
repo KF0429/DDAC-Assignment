@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Star, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -11,117 +11,67 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
 
-type Review = {
-  id: number;
-  username: string;
-  orderId: string;
-  productInfo: string;
+interface Reviews {
+  commentID: number;
+  userID: number;
+  orderItemID: number;
+  productID: number;
+  userName: string;
+  productName: string;
   rating: number;
-  review: string;
-  reply: string | null;
-};
-
-// Mock data
-const initialReviews = [
-  {
-    id: 1,
-    username: 'John Doe',
-    orderId: 'ORD001',
-    productInfo: 'Product A',
-    rating: 5,
-    review: 'Great product!',
-    reply: null,
-  },
-  {
-    id: 2,
-    username: 'Jane Smith',
-    orderId: 'ORD002',
-    productInfo: 'Product B',
-    rating: 4,
-    review: 'Good quality.',
-    reply: 'Thank you for your feedback!',
-  },
-  {
-    id: 3,
-    username: 'Bob Johnson',
-    orderId: 'ORD003',
-    productInfo: 'Product C',
-    rating: 3,
-    review: 'Average product.',
-    reply: null,
-  },
-  {
-    id: 4,
-    username: 'Alice Brown',
-    orderId: 'ORD004',
-    productInfo: 'Product D',
-    rating: 5,
-    review: 'Excellent service!',
-    reply: "We're glad you enjoyed it!",
-  },
-  {
-    id: 5,
-    username: 'Charlie Wilson',
-    orderId: 'ORD005',
-    productInfo: 'Product E',
-    rating: 3,
-    review: 'Not satisfied.',
-    reply: null,
-  },
-];
+  commentDescription: string;
+}
 
 export default function ShopRatingPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [activeStarFilter, setActiveStarFilter] = useState('all');
-  const [replyingTo, setReplyingTo] = useState<string | number | null>(null);
-  const [replyText, setReplyText] = useState('');
-  const [reviews, setReviews] = useState(initialReviews);
+  const [reviews, setReviews] = useState<Reviews[]>([]);
+  const [loading, setLoading] = useState(true); // To track loading state
+  const [error, setError] = useState<string | null>(null);
+  const userId = 1;
 
-  const filteredReviews = reviews.filter((review) => {
-    if (activeTab === 'toReply' && review.reply) return false;
-    if (activeTab === 'replied' && !review.reply) return false;
-    if (
-      activeStarFilter !== 'all' &&
-      review.rating !== parseInt(activeStarFilter)
-    )
-      return false;
-    return true;
-  });
-
-  const handleReply = (reviewId: string | number) => {
-    setReplyingTo(reviewId);
-    setReplyText('');
-  };
-
-  const submitReply = () => {
-    // In a real application, you would send this to your backend
-    setReviews(
-      reviews.map((review) =>
-        review.id === replyingTo ? { ...review, reply: replyText } : review
-      )
-    );
-    setReplyingTo(null);
-    setReplyText('');
-  };
-
-  function calculateAverageRating(reviews: Review[]): number {
+  useEffect(() => {
+      const fetchIncomes = async () => {
+        try {
+          setLoading(true);
+          const response = await fetch(
+            `http://localhost:5088/api/Comments/ShopRating/${userId}`
+          );
+          if (!response.ok) {
+            throw new Error('Failed to fetch orders');
+          }
+          const data = await response.json();
+          setReviews(data);
+        } catch (err) {
+          if (err instanceof Error) {
+            setError(err.message);
+          } else {
+            setError('An unexpected error occurred');
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchIncomes();
+    }, [userId]);
+  
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
+    
+  function calculateAverageRating(reviews: Reviews[]): number {
     if (reviews.length === 0) return 0; // Handle empty array case
 
     const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
     return totalRating / reviews.length;
   }
-  const averageRating = calculateAverageRating(initialReviews);
+  const averageRating = calculateAverageRating(reviews);
+
+  const filteredReviews = activeStarFilter === 'all' 
+    ? reviews 
+    : reviews.filter((review) => review.rating === parseInt(activeStarFilter));
 
   return (
     <div className="space-y-6">
@@ -150,12 +100,36 @@ export default function ShopRatingPage() {
             className="mt-4"
           >
             <TabsList>
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="5">5 Star</TabsTrigger>
-              <TabsTrigger value="4">4 Star</TabsTrigger>
-              <TabsTrigger value="3">3 Star</TabsTrigger>
-              <TabsTrigger value="2">2 Star</TabsTrigger>
-              <TabsTrigger value="1">1 Star</TabsTrigger>
+              <TabsTrigger value="all" className={`${
+                  activeStarFilter === 'all'
+                    ? 'bg-orange-200 text-orange-700'
+                    : 'bg-white text-gray-700'
+                } py-2 px-4 rounded transition-colors duration-200`}>All</TabsTrigger>
+              <TabsTrigger value="5" className={`${
+                  activeStarFilter === '5'
+                    ? 'bg-orange-200 text-orange-700'
+                    : 'bg-white text-gray-700'
+                } py-2 px-4 rounded transition-colors duration-200`}>5 Star</TabsTrigger>
+              <TabsTrigger value="4" className={`${
+                  activeStarFilter === '4'
+                    ? 'bg-orange-200 text-orange-700'
+                    : 'bg-white text-gray-700'
+                } py-2 px-4 rounded transition-colors duration-200`}>4 Star</TabsTrigger>
+              <TabsTrigger value="3" className={`${
+                  activeStarFilter === '3'
+                    ? 'bg-orange-200 text-orange-700'
+                    : 'bg-white text-gray-700'
+                } py-2 px-4 rounded transition-colors duration-200`}>3 Star</TabsTrigger>
+              <TabsTrigger value="2" className={`${
+                  activeStarFilter === '2'
+                    ? 'bg-orange-200 text-orange-700'
+                    : 'bg-white text-gray-700'
+                } py-2 px-4 rounded transition-colors duration-200`}>2 Star</TabsTrigger>
+              <TabsTrigger value="1" className={`${
+                  activeStarFilter === '1'
+                    ? 'bg-orange-200 text-orange-700'
+                    : 'bg-white text-gray-700'
+                } py-2 px-4 rounded transition-colors duration-200`}>1 Star</TabsTrigger>
             </TabsList>
           </Tabs>
           <p className="pl-4 mt-8 mb-2">
@@ -173,10 +147,10 @@ export default function ShopRatingPage() {
             </TableHeader>
             <TableBody>
               {filteredReviews.map((review) => (
-                <TableRow key={review.id}>
-                  <TableCell>{review.username}</TableCell>
-                  <TableCell>{review.orderId}</TableCell>
-                  <TableCell>{review.productInfo}</TableCell>
+                <TableRow key={review.commentID}>
+                  <TableCell>{review.userName}</TableCell>
+                  <TableCell>{review.orderItemID}</TableCell>
+                  <TableCell>{review.productName}</TableCell>
                   <TableCell>
                     {[...Array(5)].map((_, i) => (
                       <Star
@@ -188,7 +162,7 @@ export default function ShopRatingPage() {
                         }`}
                       />
                     ))}
-                    <p className="mt-1">{review.review}</p>
+                    <p className="mt-1">{review.commentDescription}</p>
                   </TableCell>
                 </TableRow>
               ))}

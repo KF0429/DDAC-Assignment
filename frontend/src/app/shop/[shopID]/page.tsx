@@ -6,10 +6,13 @@ import Sortbar from "@/app/Components/Sortbar";
 import Shopinfo from "@/app/Components/ShopePage/Shopinfo";
 import Categoryfilter from "@/app/Components/ShopePage/Categoryfilter";
 import { SellerInfo } from "@/app/lib/Interface/SellerInfo";
+import { Product } from "@/app/lib/Interface/ProductCard";
+import ProductCard from "@/app/Components/ProductCard";
 
 export default function Page({ params }: { params: { shopID: number } }) {
   const [seller, setSeller] = useState<SellerInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
     const fetchSeller = async () => {
       try {
@@ -28,6 +31,29 @@ export default function Page({ params }: { params: { shopID: number } }) {
       }
     };
     fetchSeller();
+  }, [params.shopID]);
+
+  useEffect(() => {
+    const fetchProductsFromSeller = async () => {
+      try {
+        const productApi = await fetch(
+          `http://localhost:5088/api/Products/MyProduct/${params.shopID}`
+        );
+        if (!productApi.ok) {
+          throw new Error("Failed to fetch the product");
+        }
+        const productData: Product[] = await productApi.json();
+        setProducts(productData);
+        console.log(productData);
+      } catch (err) {
+        const ErrorMessage =
+          err instanceof Error
+            ? err.message
+            : "An Error occur on the shopPage to fetch product";
+        setError(ErrorMessage);
+      }
+    };
+    fetchProductsFromSeller();
   }, [params.shopID]);
   if (error) return <p>Error: {error}</p>;
   return (
@@ -88,8 +114,28 @@ export default function Page({ params }: { params: { shopID: number } }) {
                   <div className="flex-1 min-w-0">
                     <div className="mb-20">
                       <Sortbar />
-                      <div className="box-border flex flex-row flex-wrap -ml-[.3125rem] -mr-[.3125rem]">
-                        Product Card here
+                      <div className="block">
+                        <div className="box-border flex flex-row flex-wrap -ml-[.3125rem] -mr-[.3125rem]">
+                          {products.length > 0 ? (
+                            products.map((product, index) => (
+                              <div
+                                className="mt-[.625rem] basis-[20%] max-w-[20%] box-border flex-grow-0 flex-shrink-0 px-[.3125rem]"
+                                key={index}
+                              >
+                                <ProductCard
+                                  key={product.productID}
+                                  productID={product.productID}
+                                  photo={product.photo}
+                                  price={product.price}
+                                  averageRating={product.averageRating}
+                                  productName={product.productName}
+                                />
+                              </div>
+                            ))
+                          ) : (
+                            <p>No products found for this shop.</p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

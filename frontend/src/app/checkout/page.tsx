@@ -147,7 +147,6 @@ export default function Page() {
                     </div>
                     <div className="pt-[.625rem]">
                       <div className="pb-[1.875rem] pt-[1.875rem] box-border flex py-0 px-[1.875rem] justify-center">
-                        {/** do the stripe payment form at here */}
                         <Elements
                           stripe={stripePromise}
                           options={{
@@ -156,7 +155,14 @@ export default function Page() {
                             currency: "myr",
                           }}
                         >
-                          <Checkout amount={subtotal} />
+                          <Checkout
+                            amount={subtotal}
+                            selectedItems={selectedItems.map((item) => ({
+                              productID: item.productID,
+                              quantity: item.quantity,
+                            }))}
+                            userID={2} //replace with dynamic userID
+                          />
                         </Elements>
                       </div>
                     </div>

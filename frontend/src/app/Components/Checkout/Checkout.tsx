@@ -6,8 +6,13 @@ import {
   PaymentElement,
 } from "@stripe/react-stripe-js";
 import convertToSubcurrency from "@/app/lib/convertToSubcurrency";
+interface CheckoutProps {
+  amount: number;
+  selectedItems: { productID: number; quantity: number }[]; // Pass selected items as props
+  userID: number; // Include user ID
+}
 
-const Checkout = ({ amount }: { amount: number }) => {
+const Checkout = ({ amount, selectedItems, userID }: CheckoutProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -26,6 +31,30 @@ const Checkout = ({ amount }: { amount: number }) => {
       .then((data) => setClientSecret(data.clientSecret));
   }, [amount]);
 
+  const handlePlaceOrder = async () => {
+    const payload = {
+      userID,
+      orderItem: selectedItems,
+    };
+    console.log("Place Order Payload:", payload);
+    try {
+      const response = await fetch(
+        "http://localhost:5088/api/Orders/PlaceOrder",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userID, oderItems: selectedItems }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to place order");
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+    }
+  };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
@@ -39,17 +68,22 @@ const Checkout = ({ amount }: { amount: number }) => {
       setLoading(false);
       return;
     }
+
+    await handlePlaceOrder();
+
     const { error } = await stripe.confirmPayment({
       elements,
       clientSecret,
       confirmParams: {
-        return_url: `http://localhost:3000/payment-sucess?amount=${amount}`, //redirect to the purchase history page
+        return_url: `http://localhost:3000`, //redirect to the purchase history page
       },
     });
+
     if (error) {
       setErrorMessage(error.message);
     } else {
     }
+
     setLoading(false);
   };
   return (

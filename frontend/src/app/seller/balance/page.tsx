@@ -164,7 +164,7 @@ export default function BalancePage() {
       transactionID: transactions.length + 1,
       createdOn: new Date().toISOString().split('T')[0],
       description: 'Withdrawal',
-      orderId: `WTH${Math.floor(Math.random() * 1000)
+      orderId: `WTHRM{Math.floor(Math.random() * 1000)
         .toString()
         .padStart(3, '0')}`,
       moneyFlow: 'Flow Out',
@@ -237,7 +237,7 @@ export default function BalancePage() {
             <h3 className="text-lg font-semibold">Seller Balance</h3>
             <div className="flex items-center mt-2">
               <p className="text-3xl font-bold mr-4">
-                ${sellerBalance.toFixed(2)}
+                RM{sellerBalance.toFixed(2)}
               </p>
               <Dialog
                 open={isWithdrawDialogOpen}
@@ -338,7 +338,7 @@ export default function BalancePage() {
                     totalAmount >= 0 ? 'text-green-600' : 'text-red-600'
                   }`}
                 >
-                  Total: ${totalAmount.toFixed(2)}
+                  Total: RM{totalAmount.toFixed(2)}
                 </span>
               </div>
               <div className="flex gap-2">
@@ -375,7 +375,7 @@ export default function BalancePage() {
                             : 'text-red-600'
                         }
                       >
-                        ${Math.abs(transaction.amount).toFixed(2)}
+                        RM{Math.abs(transaction.amount).toFixed(2)}
                       </TableCell>
                       <TableCell>{transaction.status}</TableCell>
                     </TableRow>

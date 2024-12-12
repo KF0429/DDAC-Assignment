@@ -116,7 +116,7 @@ export default function IncomePage() {
               <div className="mt-2">
                 <p className="text-sm text-muted-foreground">Total</p>
                 <p className="text-2xl font-bold">
-                  ${incomeOverview.toRelease.total}
+                  RM{incomeOverview.toRelease.total}
                 </p>
               </div>
             </div>
@@ -127,19 +127,19 @@ export default function IncomePage() {
                 <div>
                   <p className="text-sm text-muted-foreground">This Week</p>
                   <p className="text-2xl font-bold">
-                    ${incomeOverview.released.thisWeek}
+                    RM{incomeOverview.released.thisWeek}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">This Month</p>
                   <p className="text-2xl font-bold">
-                    ${incomeOverview.released.thisMonth}
+                    RM{incomeOverview.released.thisMonth}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Total</p>
                   <p className="text-2xl font-bold">
-                    ${incomeOverview.released.total}
+                    RM{incomeOverview.released.total}
                   </p>
                 </div>
               </div>
@@ -181,7 +181,7 @@ export default function IncomePage() {
                         <TableCell>{transaction.estimatedDate}</TableCell>
                         <TableCell>{transaction.status}</TableCell>
                         <TableCell>{transaction.paymentMethod}</TableCell>
-                        <TableCell>${transaction.amount}</TableCell>
+                        <TableCell>RM{transaction.amount}</TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
@@ -207,7 +207,7 @@ export default function IncomePage() {
                         <TableCell>{transaction.transactionID}</TableCell>
                         <TableCell>{transaction.estimatedDate}</TableCell>
                         <TableCell>{transaction.paymentMethod}</TableCell>
-                        <TableCell>${transaction.amount}</TableCell>
+                        <TableCell>RM{transaction.amount}</TableCell>
                       </TableRow>
                     ))}
                 </TableBody>

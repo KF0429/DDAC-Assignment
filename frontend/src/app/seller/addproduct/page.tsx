@@ -120,6 +120,31 @@ export default function AddProduct() {
   const shopId = 2; // Static ShopID
   const sellStatus = 'Reviewing'; // Default status
 
+  const uploadPhoto = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+  
+    try {
+      const response = await fetch('http://localhost:5088/api/Upload', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (response.ok) {
+        const { url } = await response.json(); // Assuming the response returns the file URL
+        return url;
+      } else {
+        const errorData = await response.text(); // Get the server's error message
+        console.error('Upload error:', errorData);
+        throw new Error('Failed to upload photo');
+      }
+    } catch (error) {
+      alert('Photo upload failed');
+      console.error(error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -136,19 +161,29 @@ export default function AddProduct() {
       return;
     }
 
-    const productData = {
-      ShopID: shopId,
-      ProductName: productName,
-      Condition: condition,
-      Photo: JSON.stringify(photo),
-      Price: price,
-      Stock: stock,
-      Category: category,
-      Description: description,
-      SellStatus: sellStatus,
-    };
-
     try {
+      // Upload the photo and get the URL
+      const photoUrl = await uploadPhoto(photo);
+  
+      if (!photoUrl) {
+        alert('Failed to upload photo');
+        return;
+      }
+  
+      // Create the product object
+      const productData = {
+        ShopID: shopId,
+        ProductName: productName,
+        Condition: condition,
+        Photo: photoUrl, // Save the photo URL
+        Price: price,
+        Stock: stock,
+        Category: category,
+        Description: description,
+        SellStatus: sellStatus,
+      };
+  
+      // Send the product data to the backend
       const response = await fetch(
         'http://localhost:5088/api/Products/CreateProduct',
         {
@@ -159,7 +194,7 @@ export default function AddProduct() {
           body: JSON.stringify(productData),
         }
       );
-
+  
       if (response.ok) {
         alert('Product created successfully!');
         router.push('/seller/myproduct'); // Redirect to the products page
@@ -169,6 +204,7 @@ export default function AddProduct() {
       }
     } catch (error) {
       alert('An error occurred while creating the product');
+      console.error(error);
     }
   };
 

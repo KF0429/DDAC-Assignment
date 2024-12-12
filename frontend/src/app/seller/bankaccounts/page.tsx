@@ -40,20 +40,30 @@ const initialBankAccounts = [
   },
 ];
 
+interface BankAccount {
+  bankAccountID: number;
+  userID: number;
+  bankName: string;
+  fullNameInBank: string;
+  accountNumber: number;
+  default: boolean;
+}
+
 export default function BankAccountsPage() {
-  const [bankAccounts, setBankAccounts] = useState(initialBankAccounts);
+  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
   const [newAccount, setNewAccount] = useState({
     fullName: '',
     bankName: '',
     accountNo: '',
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const userID = 1;
 
   const handleDefaultChange = (id: number) => {
     setBankAccounts(
       bankAccounts.map((account) => ({
         ...account,
-        isDefault: account.id === id,
+        isDefault: account.bankAccountID === id,
       }))
     );
   };
@@ -65,17 +75,17 @@ export default function BankAccountsPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newId = Math.max(...bankAccounts.map((account) => account.id)) + 1;
+    const newId = Math.max(...bankAccounts.map((account) => account.bankAccountID)) + 1;
     setBankAccounts([
       ...bankAccounts,
-      { ...newAccount, id: newId, isDefault: false },
+      { ...newAccount, bankAccountID: newId, default: false, fullNameInBank: newAccount.bankName, userID: userID, accountNumber: parseInt(newAccount.accountNo) },
     ]);
     setNewAccount({ fullName: '', bankName: '', accountNo: '' });
     setIsDialogOpen(false);
   };
 
   const handleDelete = (id: number) => {
-    setBankAccounts(bankAccounts.filter((account) => account.id !== id));
+    setBankAccounts(bankAccounts.filter((account) => account.bankAccountID !== id));
   };
 
   return (
@@ -98,21 +108,21 @@ export default function BankAccountsPage() {
             </TableHeader>
             <TableBody>
               {bankAccounts.map((account) => (
-                <TableRow key={account.id}>
-                  <TableCell>{account.fullName}</TableCell>
+                <TableRow key={account.bankAccountID}>
+                  <TableCell>{account.fullNameInBank}</TableCell>
                   <TableCell>{account.bankName}</TableCell>
-                  <TableCell>{account.accountNo}</TableCell>
+                  <TableCell>{account.accountNumber}</TableCell>
                   <TableCell>
                     <Checkbox
-                      id={`default-${account.id}`}
-                      checked={account.isDefault}
-                      onCheckedChange={() => handleDefaultChange(account.id)}
+                      id={`default-${account.bankAccountID}`}
+                      checked={account.default}
+                      onCheckedChange={() => handleDefaultChange(account.bankAccountID)}
                     />
                   </TableCell>
                   <TableCell className="pl-0">
                     <Button
                       variant="link"
-                      onClick={() => handleDelete(account.id)}
+                      onClick={() => handleDelete(account.bankAccountID)}
                     >
                       Delete
                     </Button>

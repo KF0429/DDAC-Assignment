@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,69 +28,110 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-// Mock data
-const initialSellerBalance = 10000;
-const bankAccount = {
-  name: 'Bank of America',
-  isDefault: true,
-  lastFourDigits: '1234',
-};
+interface BankAccount {
+  userID: number;
+  bankName: string;
+  accountNumber: number;
+  default: boolean;
+}
 
-const initialTransactions = [
-  {
-    id: 1,
-    date: '2023-07-10',
-    type: 'Sale',
-    orderId: 'ORD001',
-    flow: 'Money In',
-    amount: 500,
-    status: 'Completed',
-  },
-  {
-    id: 2,
-    date: '2023-07-09',
-    type: 'Withdrawal',
-    orderId: 'WTH001',
-    flow: 'Money Out',
-    amount: -1000,
-    status: 'Pending',
-  },
-  {
-    id: 3,
-    date: '2023-07-08',
-    type: 'Refund',
-    orderId: 'REF001',
-    flow: 'Money Out',
-    amount: -200,
-    status: 'Completed',
-  },
-  {
-    id: 4,
-    date: '2023-07-07',
-    type: 'Sale',
-    orderId: 'ORD002',
-    flow: 'Money In',
-    amount: 750,
-    status: 'Completed',
-  },
-];
+interface SellerBalanceDB {
+  transactionID: number;
+  userID: number;
+  balance: number;
+}
+
+interface Transaction {
+  transactionID: number;
+  createdOn: string;
+  description: string;
+  orderId: string;
+  moneyFlow: string;
+  amount: number;
+  status: string;
+}
 
 export default function BalancePage() {
-  const [sellerBalance, setSellerBalance] = useState(initialSellerBalance);
+  const [sellerBalance, setSellerBalance] = useState(0);
+  const [sellerBalanceDB, setSellerBalanceDB] = useState<SellerBalanceDB[]>([]);
+  const [bankAccount, setbankAccount] = useState<BankAccount[]>([]);
   const [withdrawalAmount, setWithdrawalAmount] = useState('');
   const [withdrawalMethod, setWithdrawalMethod] = useState('');
   const [transactionType, setTransactionType] = useState('All');
   const [searchOrderId, setSearchOrderId] = useState('');
-  const [transactions, setTransactions] = useState(initialTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [loading, setLoading] = useState(true); // To track loading state
+  const [error, setError] = useState<string | null>(null);
+
+  const userId = 1;
+
+  // Fetch transactions from the backend API
+
+  useEffect(() => {
+    const fetchTransactionsAndBalance = async () => {
+      try {
+        setLoading(true);
+        const [balanceResponse, transactionsResponse, bankAccountResponce] =
+          await Promise.all([
+            fetch(`http://localhost:5088/api/Sellers/Balance/${userId}`),
+            fetch(`http://localhost:5088/api/Transaction/Balance/${userId}`),
+            fetch(`http://localhost:5088/api/BankAccount/Default/${userId}`),
+          ]);
+
+        if (
+          !balanceResponse.ok ||
+          !transactionsResponse.ok ||
+          !bankAccountResponce.ok
+        ) {
+          throw new Error('Failed to fetch data');
+        }
+
+        const balanceData = await balanceResponse.json();
+        const transactionsData = await transactionsResponse.json();
+        const bankAccountData = await bankAccountResponce.json();
+
+        setSellerBalanceDB(balanceData);
+        setTransactions(transactionsData);
+        setbankAccount(bankAccountData);
+
+        const totalBalance =
+          balanceData.reduce(
+            (sum: number, item: SellerBalanceDB) => sum + (item.balance || 0),
+            0
+          ) +
+          transactionsData.reduce(
+            (sum: number, transaction: Transaction) =>
+              sum + (transaction.amount || 0),
+            0
+          );
+        setSellerBalance(totalBalance);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unexpected error occurred');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactionsAndBalance();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   const filteredTransactions = transactions.filter((transaction) => {
-    if (transactionType !== 'All' && transaction.flow !== transactionType)
+    if (transactionType !== 'All' && transaction.moneyFlow !== transactionType)
       return false;
     if (
       searchOrderId &&
-      !transaction.orderId.toLowerCase().includes(searchOrderId.toLowerCase())
+      !transaction.transactionID
+        .toString()
+        .includes(searchOrderId.toLowerCase())
     )
       return false;
     return true;
@@ -101,7 +142,7 @@ export default function BalancePage() {
     0
   );
 
-  const handleWithdraw = () => {
+  const handleWithdraw = async () => {
     const amount = parseFloat(withdrawalAmount);
     if (isNaN(amount) || amount <= 0) {
       setFeedbackMessage('Please enter a valid withdrawal amount.');
@@ -120,17 +161,59 @@ export default function BalancePage() {
 
     // Add new transaction
     const newTransaction = {
-      id: transactions.length + 1,
-      date: new Date().toISOString().split('T')[0],
-      type: 'Withdrawal',
+      transactionID: transactions.length + 1,
+      createdOn: new Date().toISOString().split('T')[0],
+      description: 'Withdrawal',
       orderId: `WTH${Math.floor(Math.random() * 1000)
         .toString()
         .padStart(3, '0')}`,
-      flow: 'Money Out',
+      moneyFlow: 'Flow Out',
       amount: -amount,
-      status: 'Pending',
+      status: 'Completed',
     };
     setTransactions([newTransaction, ...transactions]);
+
+    // Create the transaction DTO to send to the API
+    const transactionDto = {
+      userID: userId,
+      createdOn: new Date(),
+      description: 'Withdrawal',
+      moneyFlow: 'Flow Out',
+      amount: -amount,
+      paymentMethod: withdrawalMethod,
+      status: 'Completed',
+      estimatedDate: new Date(),
+    };
+
+    try {
+      const response = await fetch(
+        'http://localhost:5088/api/Transaction',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(transactionDto),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to create transaction');
+      }
+
+      const data = await response.json();
+
+      // Update feedback message after successful transaction creation
+      setFeedbackMessage(
+        `$${amount.toFixed(2)} has been withdrawn from your account.`
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        setFeedbackMessage(`Error: ${err.message}`);
+      } else {
+        setFeedbackMessage('An unexpected error occurred');
+      }
+    }
 
     // Reset form and close dialog
     setWithdrawalAmount('');
@@ -165,7 +248,7 @@ export default function BalancePage() {
                     Withdraw
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className='bg-white'>
                   <DialogHeader>
                     <DialogTitle>Withdrawal</DialogTitle>
                   </DialogHeader>
@@ -198,6 +281,7 @@ export default function BalancePage() {
                       <Button
                         className="bg-orange-500 hover:bg-orange-600 text-white"
                         onClick={handleWithdraw}
+                        disabled={!withdrawalAmount || !withdrawalMethod}
                       >
                         Withdraw
                       </Button>
@@ -223,11 +307,12 @@ export default function BalancePage() {
                   clipRule="evenodd"
                 />
               </svg>
-              <div>
-                <p>{bankAccount.name}</p>
-                <p>{bankAccount.isDefault ? 'Default' : ''}</p>
-                <p>****{bankAccount.lastFourDigits}</p>
-              </div>
+              {bankAccount.map((bA) => (
+                <div>
+                  <p>{bA.bankName}</p>
+                  <p>**** **** **** {bA.accountNumber.toString().slice(-4)}</p>
+                </div>
+              ))}
             </div>
           </div>
         </CardContent>
@@ -242,8 +327,8 @@ export default function BalancePage() {
           <Tabs value={transactionType} onValueChange={setTransactionType}>
             <TabsList>
               <TabsTrigger value="All">All</TabsTrigger>
-              <TabsTrigger value="Money In">Money In</TabsTrigger>
-              <TabsTrigger value="Money Out">Money Out</TabsTrigger>
+              <TabsTrigger value="Flow In">Flow In</TabsTrigger>
+              <TabsTrigger value="Flow Out">Flow Out</TabsTrigger>
             </TabsList>
             <div className="pl-4 mt-4 flex justify-between items-center mb-4">
               <div>
@@ -258,7 +343,7 @@ export default function BalancePage() {
               </div>
               <div className="flex gap-2">
                 <Input
-                  placeholder="Search Order ID"
+                  placeholder="Search Transaction ID"
                   value={searchOrderId}
                   onChange={(e) => setSearchOrderId(e.target.value)}
                 />
@@ -270,7 +355,7 @@ export default function BalancePage() {
                   <TableRow>
                     <TableHead>Date</TableHead>
                     <TableHead>Type (Description)</TableHead>
-                    <TableHead>Order ID</TableHead>
+                    <TableHead>Transaction ID</TableHead>
                     <TableHead>Money Flow</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Status</TableHead>
@@ -278,11 +363,11 @@ export default function BalancePage() {
                 </TableHeader>
                 <TableBody>
                   {filteredTransactions.map((transaction) => (
-                    <TableRow key={transaction.id}>
-                      <TableCell>{transaction.date}</TableCell>
-                      <TableCell>{transaction.type}</TableCell>
-                      <TableCell>{transaction.orderId}</TableCell>
-                      <TableCell>{transaction.flow}</TableCell>
+                    <TableRow key={transaction.transactionID}>
+                      <TableCell>{transaction.createdOn}</TableCell>
+                      <TableCell>{transaction.description}</TableCell>
+                      <TableCell>{transaction.transactionID}</TableCell>
+                      <TableCell>{transaction.moneyFlow}</TableCell>
                       <TableCell
                         className={
                           transaction.amount >= 0

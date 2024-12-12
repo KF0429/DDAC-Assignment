@@ -125,17 +125,6 @@ export default function MyOrders() {
     setEditingOrder({ ...order });
   };
 
-  // const handleSave = () => {
-  //   if (editingOrder) {
-  //     setOrders(
-  //       orders.map((order) =>
-  //         order.orderID === editingOrder.orderID ? editingOrder : order
-  //       )
-  //     );
-  //   }
-  //   setEditingOrder(null);
-  // };
-
   return (
     <div className="space-y-6 min-h-screen p-6">
       <h1 className="text-3xl font-bold">Cancellation Orders</h1>

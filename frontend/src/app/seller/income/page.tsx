@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -10,103 +10,97 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Mock data
 const incomeOverview = {
   toRelease: {
-    total: 5000,
+    total: 0,
   },
   released: {
-    thisWeek: 1000,
-    thisMonth: 3000,
-    total: 10000,
+    thisWeek: 0,
+    thisMonth: 0,
+    total: 0,
   },
 };
 
-const toReleaseOrders = [
-  {
-    id: '1',
-    order: 'ORD001',
-    estimateReleaseDate: '2023-07-15',
-    status: 'Processing',
-    paymentMethod: 'Credit Card',
-    payoutAmount: 500,
-  },
-  {
-    id: '2',
-    order: 'ORD002',
-    estimateReleaseDate: '2023-07-18',
-    status: 'Shipped',
-    paymentMethod: 'PayPal',
-    payoutAmount: 750,
-  },
-];
-
-const releasedOrders = [
-  {
-    id: '3',
-    order: 'ORD003',
-    releaseDate: '2023-07-01',
-    paymentMethod: 'Bank Transfer',
-    payoutAmount: 600,
-  },
-  {
-    id: '4',
-    order: 'ORD004',
-    releaseDate: '2023-07-05',
-    paymentMethod: 'Credit Card',
-    payoutAmount: 400,
-  },
-];
-
-interface OrderDetails {
-  releaseDate: string;
+interface Income {
+  transactionID: number;
+  userID: number;
+  estimatedDate: string;
   paymentMethod: string;
-  products: {
-    name: string;
-    unitPrice: number;
-    quantity: number;
-    subtotal: number;
-  }[];
-}
-
-const orderDetails: Record<string, OrderDetails> = {
-  ORD001: {
-    releaseDate: '2023-07-15',
-    paymentMethod: 'Credit Card',
-    products: [
-      { name: 'Product A', unitPrice: 100, quantity: 2, subtotal: 200 },
-      { name: 'Product B', unitPrice: 150, quantity: 2, subtotal: 300 },
-    ],
-  },
-  // Add more order details as needed
-};
-
-interface Order {
-  id: string;
-  order: string;
-  estimateReleaseDate?: string;
-  status?: string;
-  paymentMethod: string;
-  payoutAmount: number;
+  amount: number;
+  moneyFlow: string;
+  status: string;
 }
 
 export default function IncomePage() {
   const [activeTab, setActiveTab] = useState('toRelease');
-  const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
+  const [income, setIncome] = useState<Income[]>([]);
+  const [loading, setLoading] = useState(true); // To track loading state
+  const [error, setError] = useState<string | null>(null);
+  const userId = 1;
 
-  const handleOrderClick = (order: Order) => {
-    setSelectedOrder(orderDetails[order.order]);
+  useEffect(() => {
+    const fetchIncomes = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `http://localhost:5088/api/Transaction/Income/${userId}`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch orders');
+        }
+        const data = await response.json();
+        setIncome(data);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unexpected error occurred');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchIncomes();
+  }, [userId]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  // Helper function to calculate total amounts
+  const calculateTotal = (transactions: Income[], status: string) => {
+    return transactions
+      .filter((transaction) => transaction.status === status)
+      .reduce((total, transaction) => total + transaction.amount, 0);
   };
+
+  // Helper function to calculate totals for released incomes based on date
+  const calculateReleasedTotal = (transactions: Income[], timeFrame: 'thisWeek' | 'thisMonth' | 'total') => {
+    const now = new Date();
+    return transactions
+      .filter((transaction) => transaction.status === 'Completed')
+      .filter((transaction) => {
+        const releaseDate = new Date(transaction.estimatedDate);
+        if (timeFrame === 'thisWeek') {
+          const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); // Start of this week
+          return releaseDate >= startOfWeek;
+        } else if (timeFrame === 'thisMonth') {
+          return releaseDate.getMonth() === now.getMonth() && releaseDate.getFullYear() === now.getFullYear();
+        } else {
+          return true; // For total, just check if it's completed
+        }
+      })
+      .reduce((total, transaction) => total + transaction.amount, 0);
+  };
+
+  // Calculate the "To Release" total and the "Released" totals dynamically
+  incomeOverview.toRelease.total = calculateTotal(income, 'Pending'); // Assuming "Pending" means to release
+  incomeOverview.released.thisWeek = calculateReleasedTotal(income, 'thisWeek');
+  incomeOverview.released.thisMonth = calculateReleasedTotal(income, 'thisMonth');
+  incomeOverview.released.total = calculateReleasedTotal(income, 'total');
 
   return (
     <div className="space-y-6">
@@ -165,11 +159,13 @@ export default function IncomePage() {
               <TabsTrigger value="toRelease">To Release</TabsTrigger>
               <TabsTrigger value="released">Released</TabsTrigger>
             </TabsList>
+
+            {/* To Release Tab */}
             <TabsContent value="toRelease">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Order</TableHead>
+                    <TableHead>Transaction ID</TableHead>
                     <TableHead>Estimate Release Date</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Payment Method</TableHead>
@@ -177,145 +173,43 @@ export default function IncomePage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {toReleaseOrders.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="link"
-                              onClick={() => handleOrderClick(order)}
-                            >
-                              {order.order}
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Payment Information</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                              <p>
-                                <strong>Estimate Release Date:</strong>{' '}
-                                {selectedOrder?.releaseDate}
-                              </p>
-                              <p>
-                                <strong>Payment Method:</strong>{' '}
-                                {selectedOrder?.paymentMethod}
-                              </p>
-                              <Table>
-                                <TableHeader>
-                                  <TableRow>
-                                    <TableHead>Product Name</TableHead>
-                                    <TableHead>Unit Price</TableHead>
-                                    <TableHead>Quantity</TableHead>
-                                    <TableHead>Subtotal</TableHead>
-                                  </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                  {selectedOrder?.products.map(
-                                    (product, index) => (
-                                      <TableRow key={index}>
-                                        <TableCell>{product.name}</TableCell>
-                                        <TableCell>
-                                          ${product.unitPrice}
-                                        </TableCell>
-                                        <TableCell>
-                                          {product.quantity}
-                                        </TableCell>
-                                        <TableCell>
-                                          ${product.subtotal}
-                                        </TableCell>
-                                      </TableRow>
-                                    )
-                                  )}
-                                </TableBody>
-                              </Table>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
-                      <TableCell>{order.estimateReleaseDate}</TableCell>
-                      <TableCell>{order.status}</TableCell>
-                      <TableCell>{order.paymentMethod}</TableCell>
-                      <TableCell>${order.payoutAmount}</TableCell>
-                    </TableRow>
-                  ))}
+                  {income
+                    .filter((transaction) => transaction.status !== 'Completed') // Exclude completed orders
+                    .map((transaction) => (
+                      <TableRow key={transaction.transactionID}>
+                        <TableCell>{transaction.transactionID}</TableCell>
+                        <TableCell>{transaction.estimatedDate}</TableCell>
+                        <TableCell>{transaction.status}</TableCell>
+                        <TableCell>{transaction.paymentMethod}</TableCell>
+                        <TableCell>${transaction.amount}</TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TabsContent>
+
+            {/* Released Tab */}
             <TabsContent value="released">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Order</TableHead>
+                    <TableHead>Transaction ID</TableHead>
                     <TableHead>Release Date</TableHead>
                     <TableHead>Payment Method</TableHead>
                     <TableHead>Payout Amount</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {releasedOrders.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="link"
-                              onClick={() => handleOrderClick(order)}
-                            >
-                              {order.order}
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Payment Information</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                              <p>
-                                <strong>Release Date:</strong>{' '}
-                                {selectedOrder?.releaseDate}
-                              </p>
-                              <p>
-                                <strong>Payment Method:</strong>{' '}
-                                {selectedOrder?.paymentMethod}
-                              </p>
-                              <Table>
-                                <TableHeader>
-                                  <TableRow>
-                                    <TableHead>Product Name</TableHead>
-                                    <TableHead>Unit Price</TableHead>
-                                    <TableHead>Quantity</TableHead>
-                                    <TableHead>Subtotal</TableHead>
-                                  </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                  {selectedOrder?.products.map(
-                                    (product, index) => (
-                                      <TableRow key={index}>
-                                        <TableCell>{product.name}</TableCell>
-                                        <TableCell>
-                                          ${product.unitPrice}
-                                        </TableCell>
-                                        <TableCell>
-                                          {product.quantity}
-                                        </TableCell>
-                                        <TableCell>
-                                          ${product.subtotal}
-                                        </TableCell>
-                                      </TableRow>
-                                    )
-                                  )}
-                                </TableBody>
-                              </Table>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
-                      <TableCell>{order.releaseDate}</TableCell>
-                      <TableCell>{order.paymentMethod}</TableCell>
-                      <TableCell>${order.payoutAmount}</TableCell>
-                    </TableRow>
-                  ))}
+                  {income
+                    .filter((transaction) => transaction.status === 'Completed') // Only show completed orders
+                    .map((transaction) => (
+                      <TableRow key={transaction.transactionID}>
+                        <TableCell>{transaction.transactionID}</TableCell>
+                        <TableCell>{transaction.estimatedDate}</TableCell>
+                        <TableCell>{transaction.paymentMethod}</TableCell>
+                        <TableCell>${transaction.amount}</TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TabsContent>

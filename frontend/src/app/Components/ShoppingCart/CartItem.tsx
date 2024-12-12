@@ -16,8 +16,11 @@ interface CartItemProps {
   }[];
   userID: number;
 }
-export default function CartItem({ cartItems, userID }: CartItemProps) {
-  const [, setItems] = useState(cartItems);
+export default function CartItem({
+  cartItems: initialCartItems,
+  userID,
+}: CartItemProps) {
+  const [cartItems, setItems] = useState(initialCartItems);
 
   const handleDelete = async (productID: number) => {
     try {
@@ -146,6 +149,9 @@ export default function CartItem({ cartItems, userID }: CartItemProps) {
     const encodedItems = encodeURIComponent(JSON.stringify(selectedItems));
     router.push(`/checkout?items=${encodedItems}`);
   };
+  useEffect(() => {
+    console.log("Cart items updated:", cartItems);
+  }, [cartItems]);
   return (
     <div>
       <main

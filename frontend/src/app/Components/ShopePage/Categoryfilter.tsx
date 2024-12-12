@@ -42,7 +42,6 @@ export default function Categoryfilter({ shopID }: categoriesType) {
   if (loading) return <div>Loading categories...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  // const categories = ["All Products", ...mockSeller[0].Category];
   return (
     <div className=" flex-grow-0 flex-shrink-0 basis-[11.25rem] mr-[1.375rem] overflow-hidden">
       <div

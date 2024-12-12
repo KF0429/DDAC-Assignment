@@ -4,7 +4,6 @@ import TopNav from "../Components/Header/TopNav";
 import Footer from "../Components/General/Footer";
 import CartHeader from "../Components/ShoppingCart/CartHeader";
 import EmptyCart from "../Components/ShoppingCart/EmptyCart";
-// import { Cart } from "../lib/Mock/CartData";
 import CartItem from "../Components/ShoppingCart/CartItem";
 
 interface CartItemType {

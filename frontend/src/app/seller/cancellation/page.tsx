@@ -45,7 +45,7 @@ export default function MyOrders() {
   const [error, setError] = useState<string | null>(null);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<viewOptions>('All');
-  const userId = 1;
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     const fetchOrders = async () => {

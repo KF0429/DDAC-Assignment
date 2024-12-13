@@ -22,7 +22,7 @@ export default function MyProducts() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true); // To track loading state
   const [error, setError] = useState<string | null>(null);
-  const userId = 1;
+  const userId = localStorage.getItem('userId');
 
   const statusCounts = orders.reduce((acc, order) => {
     acc[order.status] = (acc[order.status] || 0) + 1;

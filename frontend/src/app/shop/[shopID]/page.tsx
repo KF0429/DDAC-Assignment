@@ -6,13 +6,14 @@ import Sortbar from "@/app/Components/Sortbar";
 import Shopinfo from "@/app/Components/ShopePage/Shopinfo";
 import Categoryfilter from "@/app/Components/ShopePage/Categoryfilter";
 import { SellerInfo } from "@/app/lib/Interface/SellerInfo";
-import { Product } from "@/app/lib/Interface/ProductCard";
+import { Product } from "@/app/lib/Interface/ProductWithCategory";
 import ProductCard from "@/app/Components/ProductCard";
 
 export default function Page({ params }: { params: { shopID: number } }) {
   const [seller, setSeller] = useState<SellerInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   useEffect(() => {
     const fetchSeller = async () => {
       try {
@@ -55,6 +56,21 @@ export default function Page({ params }: { params: { shopID: number } }) {
     };
     fetchProductsFromSeller();
   }, [params.shopID]);
+
+  useEffect(() => {
+    setFilteredProducts(products); // Default to all products
+  }, [products]);
+
+  const handleFilter = (category: string) => {
+    if (category === "All Products") {
+      setFilteredProducts(products); // Show all products
+    } else {
+      setFilteredProducts(
+        products.filter((product) => product.category === category)
+      );
+    }
+  };
+
   if (error) return <p>Error: {error}</p>;
   return (
     <div className="flex flex-col min-h-[100vh] relative">
@@ -106,7 +122,10 @@ export default function Page({ params }: { params: { shopID: number } }) {
                 <div className="flex mt-[1.875rem] mb-20 mx-0">
                   {/**side category section */}
                   {seller ? (
-                    <Categoryfilter shopID={seller?.shopID} />
+                    <Categoryfilter
+                      shopID={seller?.shopID}
+                      onFilter={handleFilter}
+                    />
                   ) : (
                     <p>loading information</p>
                   )}
@@ -116,25 +135,20 @@ export default function Page({ params }: { params: { shopID: number } }) {
                       <Sortbar />
                       <div className="block">
                         <div className="box-border flex flex-row flex-wrap -ml-[.3125rem] -mr-[.3125rem]">
-                          {products.length > 0 ? (
-                            products.map((product, index) => (
-                              <div
-                                className="mt-[.625rem] basis-[20%] max-w-[20%] box-border flex-grow-0 flex-shrink-0 px-[.3125rem]"
-                                key={index}
-                              >
-                                <ProductCard
-                                  key={product.productID}
-                                  productID={product.productID}
-                                  photo={product.photo}
-                                  price={product.price}
-                                  averageRating={product.averageRating}
-                                  productName={product.productName}
-                                />
-                              </div>
-                            ))
-                          ) : (
-                            <p>No products found for this shop.</p>
-                          )}
+                          {filteredProducts.map((product, index) => (
+                            <div
+                              className="mt-[.625rem] basis-[20%] max-w-[20%] box-border flex-grow-0 flex-shrink-0 px-[.3125rem]"
+                              key={index}
+                            >
+                              <ProductCard
+                                productID={product.productID}
+                                photo={product.photo}
+                                price={product.price}
+                                averageRating={product.averageRating}
+                                productName={product.productName}
+                              />
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>

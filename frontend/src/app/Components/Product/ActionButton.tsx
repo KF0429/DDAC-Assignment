@@ -1,7 +1,6 @@
 import React from "react";
 import Image from "next/image";
 export default function ActionButton({
-  price,
   buttonAction,
 }: {
   price: number;
@@ -26,16 +25,6 @@ export default function ActionButton({
             className="h-5 mr-[10px] w-5 border-0 overflow-clip fill-[#d0011b]"
           ></Image>
           <span>add to cart</span>
-        </button>
-        <button
-          className="bg-[#d0011b] outline-0 overflow-visible relative text-white h-12 py-0 px-5 text-ellipsis 
-                                  items-center border-0 rounded-sm shadow-ssm box-border cursor-pointer flex flex-col justify-center capitalize
-                                  max-w-none text-sm min-w-[180px] m-0"
-        >
-          <div>Buy Now</div>
-          <div className="text-lg font-medium text-white capitalize">
-            RM{price.toFixed(2)}
-          </div>
         </button>
       </div>
     </div>

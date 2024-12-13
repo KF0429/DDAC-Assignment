@@ -1,13 +1,14 @@
 "use client";
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 interface categoriesType {
   shopID: number;
+  onFilter: (category: string) => void;
 }
-export default function Categoryfilter({ shopID }: categoriesType) {
+
+export default function Categoryfilter({ shopID, onFilter }: categoriesType) {
   const [selectedCategory, setSelectedCategory] = useState("All Products");
-  const [categories, setCategories] = useState<string[]>(["All Products"]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +22,9 @@ export default function Categoryfilter({ shopID }: categoriesType) {
           throw new Error("Failed to fetch categories");
         }
         const data = await response.json();
-        console.log("this is the data from filter component", data);
+        console.log("Fetched categories data:", data);
+
+        // Assuming `data.productCategory` is a comma-separated string
         setCategories(["All Products", ...data.productCategory.split(",")]);
       } catch (err) {
         const errorMessage =
@@ -37,13 +40,14 @@ export default function Categoryfilter({ shopID }: categoriesType) {
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
+    onFilter(category); // Notify parent of category selection
   };
 
   if (loading) return <div>Loading categories...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className=" flex-grow-0 flex-shrink-0 basis-[11.25rem] mr-[1.375rem] overflow-hidden">
+    <div className="flex-grow-0 flex-shrink-0 basis-[11.25rem] mr-[1.375rem] overflow-hidden">
       <div
         className="items-center border-b border-[rgba(0,0,0,.05)] text-black flex font-bold
                 text-[1rem] h-[3.125rem] leading-[3.125rem] mb-[.625rem] no-underline capitalize"

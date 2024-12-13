@@ -34,7 +34,7 @@ export default function MyProducts() {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://localhost:5088/api/Orders/Seller/MyOrder/${userId}`
+          `http://localhost:5088/api/Orders/Seller/MainPage/${userId}`
         );
         if (!response.ok) {
           throw new Error('Failed to fetch orders');

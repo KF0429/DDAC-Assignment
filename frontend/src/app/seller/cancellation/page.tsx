@@ -175,7 +175,7 @@ export default function MyOrders() {
             {filteredOrders.map((order) => (
               <TableRow key={order.orderID}>
                 <TableCell>{order.productName}</TableCell>
-                <TableCell>{order.total}</TableCell>
+                <TableCell>RM{order.total}</TableCell>
                 <TableCell>{order.status}</TableCell>
                 <TableCell>{order.orderDate}</TableCell>
                 <TableCell>{order.cancellationStatus}</TableCell>

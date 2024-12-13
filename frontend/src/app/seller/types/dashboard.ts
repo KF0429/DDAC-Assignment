@@ -3,8 +3,5 @@ export type SidebarItem = {
     href: string;
   };
   
-  export type User = {
-    name: string;
-  };
   
   

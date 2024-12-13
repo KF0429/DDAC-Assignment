@@ -24,7 +24,7 @@ export default function ShopInformationPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true); // To track loading state
   const [error, setError] = useState<string | null>(null);
-  const userId = 1;
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     const fetchIncomes = async () => {

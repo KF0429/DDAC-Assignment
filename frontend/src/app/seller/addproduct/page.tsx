@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -117,7 +118,7 @@ export default function AddProduct() {
   const [photo, setPhoto] = useState<File | null>(null);
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
-  const shopId = 2; // Static ShopID
+  const shopId = localStorage.getItem('sellerId');
   const sellStatus = 'Reviewing'; // Default status
 
   const uploadPhoto = async (file: File) => {

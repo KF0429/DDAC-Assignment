@@ -29,7 +29,7 @@ export default function MyProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const userId = 1;
+  const userId = 3;
   const shopId = 2;
 
   const filteredProducts =

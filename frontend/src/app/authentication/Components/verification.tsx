@@ -1,12 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 export default function VerificationPage() {
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const searchParams = useSearchParams(); // Access query parameters
-  const phoneNumber = searchParams.get('phone') || ''; // Get phone number from query
+
+  // Retrieve query parameters
+  const phoneNumber = searchParams.get('phone');
+  const userType = searchParams.get('userType');
 
   const [seconds, setSeconds] = useState(59);
   const [verificationCode, setVerificationCode] = useState([
@@ -38,22 +41,30 @@ export default function VerificationPage() {
     }
   };
 
+  const handleVerification = () => {
+    const code = verificationCode.join('');
+    console.log('Verification Code Entered:', code);
+    console.log('Phone Number:', phoneNumber);
+    console.log('User Type:', userType);
+
+    if (code.length === 6) {
+      if (userType === 'buyer') {
+        router.push(`/authentication?page=buyer&phone=${phoneNumber}`);
+      } else if (userType === 'seller') {
+        router.push(
+          `/authentication/seller?page=sellerpasswordsetup&phone=${phoneNumber}`
+        );
+        
+      }
+    } else {
+      alert('Please enter a valid 6-digit code.');
+    }
+  };
+
   const handleResendCode = () => {
     if (seconds === 0) {
       setSeconds(59);
       console.log('Resending verification code...');
-    }
-  };
-
-  const navigateToBuyerPage = () => {
-    const code = verificationCode.join('');
-    if (code.length === 6) {
-      // Mock verification success
-      console.log('Verification code entered:', code);
-      // Navigate to Buyer Info page with phone number passed as a query parameter
-      router.push(`/authentication?page=buyer&phone=${phoneNumber}`);
-    } else {
-      alert('Please enter a valid 6-digit code.');
     }
   };
 
@@ -65,7 +76,7 @@ export default function VerificationPage() {
         </h2>
         <p className="text-center text-gray-600 mb-6">
           A verification code has been sent to your phone number <br />
-          <strong>(+60) {phoneNumber}</strong>
+          <strong>(+60) {phoneNumber || 'undefined'}</strong>
         </p>
         <div className="flex justify-center mb-8">
           {verificationCode.map((value, index) => (
@@ -93,10 +104,10 @@ export default function VerificationPage() {
           )}
         </p>
         <button
-          onClick={navigateToBuyerPage}
+          onClick={handleVerification}
           className="w-full bg-[#ee4d2d] text-white py-3 rounded-md hover:bg-[#d83e27]"
         >
-          NEXT
+          Verify
         </button>
       </div>
     </div>

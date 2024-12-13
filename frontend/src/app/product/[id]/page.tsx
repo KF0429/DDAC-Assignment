@@ -16,6 +16,7 @@ import ProductPriceInfo from "@/app/Components/Product/ProductPriceInfo";
 import Image from "next/image";
 import type { ProductCommenttype } from "@/app/lib/Interface/ProductCommenttype";
 import NoComment from "@/app/Components/Product/NoComment";
+
 export default function ProductPage({ params }: { params: { id: number } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [seller, setSeller] = useState<SellerInfo | null>(null);
@@ -25,13 +26,30 @@ export default function ProductPage({ params }: { params: { id: number } }) {
   const maxQuantity = product?.stock || 0;
   const [showAlert, setShowAlert] = useState(false);
 
+  // Function to fetch userId from localStorage
+  const getUserId = () => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (loggedInUser) {
+      const parsedUser = JSON.parse(loggedInUser);
+      return parsedUser.userId || null; // Adjust if the key differs in localStorage
+    }
+    return null;
+  };
+
+  const userId = getUserId();
+
   const handleClick = async () => {
-    const userId = 2;
+    if (!userId) {
+      alert("User not logged in.");
+      return;
+    }
+
     const cartItem = {
       userID: userId,
       productID: product?.productID,
       quantity: stock,
     };
+
     try {
       const cartResponse = await fetch("http://localhost:5088/api/Carts", {
         method: "POST",
@@ -40,9 +58,11 @@ export default function ProductPage({ params }: { params: { id: number } }) {
         },
         body: JSON.stringify(cartItem),
       });
+
       if (!cartResponse.ok) {
         throw new Error("Failed to add item to cart");
       }
+
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
@@ -52,22 +72,26 @@ export default function ProductPage({ params }: { params: { id: number } }) {
       alert("Failed to add item to cart.");
     }
   };
+
   const handleDecrement = () => {
     if (stock > 1) {
       setQuantity(stock - 1);
     }
   };
+
   const handleIncrement = () => {
     if (stock < maxQuantity) {
       setQuantity(stock + 1);
     }
   };
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        //to gte the product by product ID
+        // Fetch the product by product ID
         const response = await fetch(
           `http://localhost:5088/api/Products/with-seller/${params.id}`
         );
@@ -77,28 +101,29 @@ export default function ProductPage({ params }: { params: { id: number } }) {
         const data = await response.json();
         setProduct(data);
 
-        //To get the seller information by the ShopID
+        // Fetch the seller information by the ShopID
         const SellerID = data.shopID;
         const SellerResponse = await fetch(
           `http://localhost:5088/api/Sellers/${SellerID}`
         );
         const sellerInfo = await SellerResponse.json();
         setSeller(sellerInfo);
-        console.log(`the product amount is${sellerInfo.productsAmount}`);
-        //To Get the Comment
+
+        // Fetch the comments
         const CommentResponse = await fetch(
           `http://localhost:5088/api/Comments/getCommentbyProductId/${params.id}`
         );
-        // this 404 is when the api is not fetching any thing == comment is empty
+
         if (CommentResponse.status === 404) {
           console.warn("No comments found for this product.");
           setComments([]);
           return;
         }
         if (!CommentResponse.ok) {
-          throw new Error(`Fail to fetch Comments`);
+          throw new Error(`Failed to fetch Comments`);
         }
-        const commentData: ProductCommenttype[] = await CommentResponse.json();
+        const commentData: ProductCommenttype[] =
+          await CommentResponse.json();
         setComments(commentData);
       } catch (err) {
         const errorMessage =
@@ -110,12 +135,14 @@ export default function ProductPage({ params }: { params: { id: number } }) {
     };
     fetchProducts();
   }, [params.id]);
+
   if (loading) return <p>Loading Product...</p>;
   if (error) return <p>Error: {error}</p>;
 
   if (!product) {
     return <p>Product not found.</p>;
   }
+
   return (
     <div>
       <div className="flex flex-col min-h-100vh relative">
@@ -124,17 +151,13 @@ export default function ProductPage({ params }: { params: { id: number } }) {
             <div>
               <Header />
               <div className="transition-margin-top duration-300 custom-bezier">
-                {/**product-page */}
                 <div>
-                  <div className="fixed z-[99999] bottom-0 left-0"></div>
-                  {/**main*/}
                   <div className="pb-[4.375rem] ml-auto mr-auto w-[1200px]">
                     <div className="flex items-center whitespace-nowrap h-4 mt-5">
                       <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                         {product.productName}
                       </span>
                     </div>
-                    {/**product card */}
                     <section className="flex bg-white rounded-[3px] shadow-ssm mt-5 p-0">
                       <h1 className="h-[1px] m-0 overflow-hidden absolute whitespace-nowrap w-[1px] -z-[1000] text-[2em]">
                         {product.productName}
@@ -171,7 +194,6 @@ export default function ProductPage({ params }: { params: { id: number } }) {
                         </div>
                       </section>
                     </section>
-                    {/**shop */}
                     <section className="pt-[1.5625rem] bg-white rounded-sm shadow-ssm mt-[.9375rem] overflow-hidden block">
                       {seller ? (
                         <ProductSeller
@@ -183,10 +205,9 @@ export default function ProductPage({ params }: { params: { id: number } }) {
                           joinDate={seller.dateTime}
                         />
                       ) : (
-                        <p>loading informationi</p>
+                        <p>Loading seller information...</p>
                       )}
                     </section>
-                    {/**wAMdpk */}
                     <div className="block">
                       <div className="flex min-h-[40rem]">
                         <div className="flex-1 min-w-0">

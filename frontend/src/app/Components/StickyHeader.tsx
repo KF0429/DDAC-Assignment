@@ -1,21 +1,37 @@
-import Link from "next/link";
-import React from "react";
-import CartIcon from "./Header/CartIcon";
-import TopNav from "./Header/TopNav";
-import SearchBar from "./Header/SearchBar";
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
+import CartIcon from './Header/CartIcon';
+import TopNav from './Header/TopNav';
+import SearchBar from './Header/SearchBar';
 
 interface HeaderProps {
   isFixed?: boolean;
 }
 
 export default function Header({ isFixed = true }: HeaderProps) {
-  const user = 2;
+  const [userID, setUserID] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Function to get userId from localStorage
+    const getUserId = () => {
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      if (loggedInUser) {
+        const parsedUser = JSON.parse(loggedInUser);
+        return parsedUser.userId || null; // Adjust if the key differs
+      }
+      return null;
+    };
+
+    // Set the userID from localStorage
+    const id = getUserId();
+    setUserID(id);
+  }, []);
   return (
     <div>
       <header
         className={`left-0 right-0 top-0 translate-z-0 z-[100] bg-gradient-to-b from-[#f53d2d] to-[#f63] 
       transition-transform duration-200 ease-[cubic-bezier(.4,0,.2,1)] ${
-        isFixed ? "fixed" : ""
+        isFixed ? 'fixed' : ''
       }`}
       >
         <div className="min-w-[1200px] bg-transparent h-[2.125rem] relative z-[400]">
@@ -25,7 +41,7 @@ export default function Header({ isFixed = true }: HeaderProps) {
           <div className="min-w-[1200px] bg-transparent shadow-ssm box-border">
             <div className="max-w-[1200px] box-border flex h-[5.3125rem] justify-between py-4 px-2.5 ml-auto mr-auto">
               <Link
-                href={"/"}
+                href={'/'}
                 className="pr-10 relative -top-[.1875rem] box-border no-underline cursor-pointer"
               >
                 <div className="rounded-sm -m-[2px] p-[2px]">
@@ -41,7 +57,7 @@ export default function Header({ isFixed = true }: HeaderProps) {
               </Link>
               <SearchBar />
               <div className="items-center flex flex-1 justify-center mx-0 my-[10px] pb-[5px] box-border">
-                <CartIcon userID={user} />
+                {userID !== null && <CartIcon userID={userID} />}
               </div>
             </div>
           </div>

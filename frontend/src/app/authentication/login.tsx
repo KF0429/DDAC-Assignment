@@ -34,18 +34,22 @@ export default function LoginPage() {
       if (response.ok) {
         const data = await response.json();
 
-        // Debugging: Log the data to the browser console
-        console.log('Response Data:', data);
-        console.log('Token:', data.token);
-
-        // Save the token and username to localStorage
+        // Save the token, username, and userId to localStorage
         localStorage.setItem(
           'loggedInUser',
           JSON.stringify({
-            username: data.userName,
-            token: data.token,
+            username: data.userName, // Matches backend's 'userName'
+            token: data.Token, // Matches backend's 'Token'
+            userId: data.userId, // Matches backend's 'userId'
           })
         );
+
+        // Debugging: Log the stored user details
+        console.log('User logged in:', {
+          username: data.userName,
+          token: data.Token, // Access 'Token' as it is sent by the backend
+          userId: data.userId,
+        });
 
         alert('Login successful!');
         router.push('/'); // Redirect to homepage/dashboard

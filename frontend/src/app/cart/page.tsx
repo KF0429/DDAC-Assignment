@@ -25,10 +25,27 @@ export default function ShopingCart() {
   const [cartData, setCartData] = useState<CartData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const userId = 2; // Assuming user ID is hardcoded for now
+
+  // Retrieve userId from localStorage
+  const getUserId = () => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (loggedInUser) {
+      const parsedUser = JSON.parse(loggedInUser);
+      return parsedUser.userId || null; // Replace with the correct key for `userId`
+    }
+    return null;
+  };
+
+  const userId = getUserId();
 
   useEffect(() => {
     const fetchCartData = async () => {
+      if (!userId) {
+        setError("User not logged in.");
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await fetch(
           `http://localhost:5088/api/Carts/${userId}`

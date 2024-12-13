@@ -10,8 +10,8 @@ interface BuyerPageProps {
 export default function BuyerPage({ phone }: BuyerPageProps) {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    password: '',
     phone: phone || '', // Pre-fill phone number
+    password: '',
   });
 
   const handleChange = (

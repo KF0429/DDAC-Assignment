@@ -9,6 +9,7 @@ export default function RegisterPage() {
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const router = useRouter();
+  const userType = 'buyer'; // Set default user type as buyer
 
   const handleNext = (phone: string, nextRoute: string) => {
     setPhoneNumber(phone);
@@ -17,8 +18,10 @@ export default function RegisterPage() {
   };
 
   const handleSendSMS = () => {
-    // Navigate to the verification page with the phone number as a query parameter
-    router.push(`/authentication?page=verification&phone=${phoneNumber}`);
+    // Navigate to the verification page with the phone number and user type as query parameters
+    router.push(
+      `/authentication?page=verification&phone=${phoneNumber}&userType=${userType}`
+    );
   };
 
   const navigateToLogin = () => {

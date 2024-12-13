@@ -1,18 +1,70 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import StickyHeader from "@/app/Components/StickyHeader";
 import SideBar from "@/app/Components/SideBar";
-// import ProductCard from "@/app/Components/ProductCard";
 import Sortbar from "@/app/Components/Sortbar";
+import { Product } from "@/app/lib/Interface/ProductCard";
+import ProductCard from "@/app/Components/ProductCard";
 
 interface Pageprops {
   params: {
     keyword: string;
   };
 }
+const ErrorFallback = () => (
+  <div className="flex flex-col relative min-h-[100vh]">
+    <StickyHeader isFixed={false} />
+    <div style={{ display: "contents" }}>
+      <div className="transition-[margin-top] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]">
+        <div className="min-h-[100vh]">
+          <div className="flex mt-5 ml-auto mr-auto w-[1200px] items-center justify-center">
+            <div className="items-center flex flex-col justify-center mt-[6.25rem] mx-0 mb-[7.5rem]">
+              <div className="text-[rgba(0,0,0,.87)] text-lg mt-[.9375rem] mx-0 mb-[.625rem]">
+                No Results found
+              </div>
+              <div className="text-lg text-[rgba(0,0,0,.54)]">
+                Try more general keywords
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 export default function SearchResults({ params }: Pageprops) {
   const { keyword } = params;
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `http://localhost:5088/api/Products/SearchProducts/${encodeURIComponent(
+            keyword
+          )}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch search results");
+        }
+        const data: Product[] = await response.json();
+        setProducts(data);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "An unknown error occurred";
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, [keyword]);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <ErrorFallback />;
 
   return (
     <div className="flex flex-col min-h-[100vh] relative">
@@ -65,20 +117,20 @@ export default function SearchResults({ params }: Pageprops) {
                     </h1>
                     <Sortbar />
                     <ul className="ml-.3125rem mr-.3125rem list-none m-0 pl-0 pr-0 box-border flex-row flex-wrap flex">
-                      {/* {mockProducts.map((product, index) => (
+                      {products.map((product, index) => (
                         <div
                           key={index}
                           className="box-border p-[.3125rem] w-[16.66667%]"
                         >
                           <ProductCard
-                            id={product.id}
-                            imageUrl={product.imageUrl}
-                            title={product.title}
+                            productID={product.productID}
+                            photo={product.photo}
+                            productName={product.productName}
                             price={product.price}
-                            rating={product.rating}
+                            averageRating={product.averageRating}
                           />
                         </div>
-                      ))} */}
+                      ))}
                     </ul>
                   </section>
                 </div>

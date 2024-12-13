@@ -48,7 +48,7 @@ export default function TopNav() {
             // Display UserDropdown for logged-in users
             <UserDropdown
               username={loggedInUser.username}
-              handleLogout={handleLogout}
+              
             />
           ) : (
             <>

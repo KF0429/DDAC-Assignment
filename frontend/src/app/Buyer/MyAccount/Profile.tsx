@@ -10,6 +10,7 @@ export default function Profile() {
     address: '',
     dateOfBirth: '',
     gender: '',
+    avatar: '', // Add avatar to profileData
   });
 
   // Backend base URL
@@ -64,14 +65,6 @@ export default function Profile() {
       formData.append('DateOfBirth', profileData.dateOfBirth);
       formData.append('Gender', profileData.gender);
 
-      // Commented out avatar handling
-      // const imageFile = document.getElementById(
-      //   'profileImageUpload'
-      // ) as HTMLInputElement;
-      // if (imageFile?.files?.[0]) {
-      //   formData.append('Avatar', imageFile.files[0]);
-      // }
-
       const response = await fetch(
         `${baseUrl}/api/Users/update-profile/${userId}`,
         {
@@ -93,6 +86,26 @@ export default function Profile() {
 
   return (
     <div className="flex">
+      {/* Profile Image Section */}
+      <div className="w-1/3 pr-6">
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold mb-4">My Profile</h2>
+          <div className="flex flex-col items-center">
+            {/* Profile Image */}
+            <div className="w-32 h-32 mb-4">
+              <img
+                src={
+                  profileData.avatar ||
+                  '/my.img.susercontent.com/file/6bbcffe25fe220fe8fde7cdd0322b6b5'
+                } // Fallback to a default placeholder
+                alt="Profile"
+                className="w-full h-full rounded-full object-cover border"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Profile Form Section */}
       <div className="w-2/3">
         <form onSubmit={handleFormSubmit}>
@@ -119,18 +132,11 @@ export default function Profile() {
               className="w-full p-3 border rounded-md"
               placeholder="Enter your phone number"
               value={profileData.phoneNumber}
-              onChange={(e) =>
-                setProfileData({
-                  ...profileData,
-                  phoneNumber: e.target.value,
-                })
-              }
+              readOnly
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-2">
-              Email
-            </label>
+            <label className="block text-gray-700 font-medium mb-2">Email</label>
             <input
               type="email"
               className="w-full p-3 border rounded-md"
@@ -162,16 +168,14 @@ export default function Profile() {
             <input
               type="date"
               className="w-full p-3 border rounded-md"
-              value={profileData.dateOfBirth}
+              value={profileData.dateOfBirth?.split('T')[0] || ''} // Display date only
               onChange={(e) =>
                 setProfileData({ ...profileData, dateOfBirth: e.target.value })
               }
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-2">
-              Gender
-            </label>
+            <label className="block text-gray-700 font-medium mb-2">Gender</label>
             <select
               className="w-full p-3 border rounded-md"
               value={profileData.gender}

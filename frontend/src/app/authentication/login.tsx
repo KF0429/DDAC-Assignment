@@ -45,9 +45,9 @@ export default function LoginPage() {
         );
 
         // Debugging: Log the stored user details
-        console.log('User logged in:', {
+        console.log('User logged in and saved to localStorage:', {
           username: data.userName,
-          token: data.Token, // Access 'Token' as it is sent by the backend
+          token: data.Token,
           userId: data.userId,
         });
 
@@ -59,7 +59,7 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.error('Error during login:', err);
-      alert('An error occurred. Please try again later.');
+      alert('Wrong phone number or password.');
     }
   };
 
@@ -72,12 +72,8 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <h2 className="text-2xl font-semibold text-center">Log In</h2>
 
-        {/* Phone Input */}
         <div>
-          <label
-            htmlFor="phoneNumber"
-            className="block text-gray-700 font-medium mb-2"
-          >
+          <label htmlFor="phoneNumber" className="block text-gray-700 font-medium mb-2">
             Phone Number
           </label>
           <input
@@ -92,12 +88,8 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* Password Input */}
         <div>
-          <label
-            htmlFor="password"
-            className="block text-gray-700 font-medium mb-2"
-          >
+          <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
             Password
           </label>
           <input
@@ -112,15 +104,10 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* Login Button */}
-        <button
-          type="submit"
-          className="w-full bg-[#ee4d2d] text-white py-3 rounded-md hover:bg-[#d83e27]"
-        >
+        <button type="submit" className="w-full bg-[#ee4d2d] text-white py-3 rounded-md hover:bg-[#d83e27]">
           LOG IN
         </button>
 
-        {/* Navigation Links */}
         <div className="flex justify-between text-sm mt-4">
           <button
             type="button"

@@ -3,15 +3,20 @@
 import React, { useState } from 'react';
 import FeedbackForm from '@/app/Buyer/Components/FeedbackForm';
 
-interface Order {
-  id: string;
-  sellerName: string;
+interface Product {
+  productID: number;
   productName: string;
-  variation: string;
   quantity: number;
-  price: string;
+  unitPrice: number;
+  subtotal: number;
+}
+
+interface Order {
+  orderID: number;
+  userID: number;
+  orderDate: string;
   status: string;
-  image: string;
+  items: Product[];
 }
 
 interface CartProps {
@@ -19,82 +24,88 @@ interface CartProps {
 }
 
 export default function Cart({ orders }: CartProps) {
-  const [feedbackOpenForOrder, setFeedbackOpenForOrder] = useState<
-    string | null
-  >(null);
+  const [feedbackOpenForOrder, setFeedbackOpenForOrder] = useState<number | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [ratedItems, setRatedItems] = useState<{ [key: string]: boolean }>({}); // Track rated products
 
-  const openFeedbackForm = (orderId: string) => {
+  const openFeedbackForm = (orderId: number, product: Product) => {
     setFeedbackOpenForOrder(orderId);
+    setSelectedProduct(product);
+    console.log('Order ID:', orderId, 'Product ID:', product.productID);
   };
 
   const closeFeedbackForm = () => {
     setFeedbackOpenForOrder(null);
+    setSelectedProduct(null);
+  };
+
+  const markAsRated = (orderId: number, productId: number) => {
+    setRatedItems((prev) => ({
+      ...prev,
+      [`${orderId}-${productId}`]: true, // Mark this order-product pair as rated
+    }));
   };
 
   return (
     <div className="space-y-4 bg-gray-100">
-      {orders.map((order) => (
-        <div
-          key={order.id}
-          className="bg-white rounded-md shadow p-4 border border-gray-200"
-        >
-          {/* Top Section */}
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center space-x-2">
-              <h3 className="text-sm font-semibold">{order.sellerName}</h3>
-              <button className="text-sm text-red-500 font-medium px-2 py-1 border border-red-500 rounded">
-                View Shop
-              </button>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-green-600">{order.status}</span>
-              <span className="text-sm text-red-500 font-semibold">
-                COMPLETED
+      {orders.length === 0 ? (
+        <p className="text-center">No orders found.</p>
+      ) : (
+        orders.map((order) => (
+          <div
+            key={order.orderID}
+            className="bg-white rounded-md shadow p-4 border-gray-200"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Order #{order.orderID}</h3>
+              <span
+                className={`text-lg ${
+                  order.status === 'Pending' ? 'text-yellow-500' : 'text-green-600'
+                }`}
+              >
+                {order.status}
               </span>
             </div>
-          </div>
-
-          {/* Product Details */}
-          <div className="flex items-center space-x-4">
-            <img
-              src={order.image}
-              alt={order.productName}
-              className="w-20 h-20 object-cover rounded-md"
-            />
+            <div className="border-t">
+              <p className="text-lg">Order Date: {new Date(order.orderDate).toLocaleDateString()}</p>
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-800">
-                {order.productName}
-              </p>
-              <p className="text-sm text-gray-600">
-                Variation: {order.variation}
-              </p>
-              <p className="text-sm text-gray-600">x{order.quantity}</p>
+              <h4 className="text-lg font-semibold mb-2">Products:</h4>
+              {order.items.map((item) => (
+                <div key={item.productID} className="mb-2 pt-1">
+                  <p className="text-lg mb-2">Name: {item.productName}</p>
+                  <p className="text-lg mb-2">Quantity: {item.quantity}</p>
+                  <p className="text-lg font-bold mb-2">Subtotal: RM{item.subtotal}</p>
+                  <div className="text-right mt-2">
+                    <button
+                      className={`py-1 px-3 rounded-md text-lg ${
+                        ratedItems[`${order.orderID}-${item.productID}`]
+                          ? 'bg-gray-500 text-white cursor-not-allowed'
+                          : 'bg-[#ee4d2d] text-white hover:bg-[#d83e27]'
+                      }`}
+                      onClick={() => openFeedbackForm(order.orderID, item)}
+                      disabled={ratedItems[`${order.orderID}-${item.productID}`]}
+                    >
+                      {ratedItems[`${order.orderID}-${item.productID}`] ? 'Done Rate' : 'Rate'}
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-
-          {/* Price */}
-          <div className="text-right">
-            <p className="text-lg text-[#ee4d2d] font-bold">{order.price}</p>
-          </div>
-
-          {/* Action */}
-          <div className="text-right mt-4">
-            <button
-              className="bg-[#ee4d2d] text-white py-2 px-4 rounded-md hover:bg-[#d83e27]"
-              onClick={() => openFeedbackForm(order.id)}
-            >
-              Rate
-            </button>
-          </div>
-        </div>
-      ))}
+        ))
+      )}
 
       {/* Feedback Form */}
-      <FeedbackForm
-        isOpen={!!feedbackOpenForOrder}
-        orderId={feedbackOpenForOrder}
-        onClose={closeFeedbackForm}
-      />
+      {feedbackOpenForOrder !== null && selectedProduct && (
+        <FeedbackForm
+          isOpen={!!feedbackOpenForOrder}
+          orderId={feedbackOpenForOrder}
+          product={selectedProduct}
+          onClose={closeFeedbackForm}
+          onFeedbackSubmitted={markAsRated}
+        />
+      )}
     </div>
   );
 }

@@ -8,7 +8,6 @@ import Footer from '@/app/Components/General/Footer';
 
 // Dynamically import pages
 const Profile = React.lazy(() => import('./Profile'));
-const BankAndCard = React.lazy(() => import('./BankAndCard'));
 const ChangePassword = React.lazy(() => import('./ChangePassword'));
 const Address = React.lazy(() => import('./Address'));
 
@@ -19,9 +18,7 @@ export default function MyAccountPage() {
   const renderContent = () => {
     switch (page) {
       case 'profile':
-        return <Profile />;
-      case 'bankAndCard':
-        return <BankAndCard />;
+        return <Profile />;    
       case 'change-password':
         return <ChangePassword />;
       case 'address':

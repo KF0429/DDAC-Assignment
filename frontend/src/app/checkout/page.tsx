@@ -1,19 +1,19 @@
-"use client";
-import React from "react";
-import TopNav from "../Components/Header/TopNav";
-import CartHeader from "../Components/ShoppingCart/CartHeader";
-import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import convertToSubcurrency from "../lib/convertToSubcurrency";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
-import Checkout from "../Components/Checkout/Checkout";
+'use client';
+import React from 'react';
+import TopNav from '../Components/Header/TopNav';
+import CartHeader from '../Components/ShoppingCart/CartHeader';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import convertToSubcurrency from '../lib/convertToSubcurrency';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import Checkout from '../Components/Checkout/Checkout';
 
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
-  throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
+  throw new Error('NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined');
 }
 const stripePromise = loadStripe(
-  "pk_test_51QUjwjG4pl327CYRzIzrrnaNhFvRPXTFNJMTd9kpIpfvDNJf9TOpFLDmC9LvnaWSb8nE6zK4rPGgMZDef32tVqvd002ImESkkd"
+  'pk_test_51QUjwjG4pl327CYRzIzrrnaNhFvRPXTFNJMTd9kpIpfvDNJf9TOpFLDmC9LvnaWSb8nE6zK4rPGgMZDef32tVqvd002ImESkkd'
 );
 
 interface CartItemType {
@@ -27,7 +27,7 @@ interface CartItemType {
 }
 export default function Page() {
   const searchParams = useSearchParams();
-  const itemsParam = searchParams.get("items");
+  const itemsParam = searchParams.get('items');
   const selectedItems: CartItemType[] = itemsParam
     ? JSON.parse(decodeURIComponent(itemsParam))
     : [];
@@ -36,6 +36,17 @@ export default function Page() {
     0
   );
 
+  // Retrieve user ID from localStorage
+  const getUserId = () => {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (loggedInUser) {
+      const parsedUser = JSON.parse(loggedInUser);
+      return parsedUser.userId || null; // Replace with correct key if needed
+    }
+    return null;
+  };
+
+  const userId = getUserId();
   return (
     <div className="flex flex-col min-h-[100vh] relative">
       <header
@@ -47,7 +58,7 @@ export default function Page() {
         </div>
       </header>
       <div className="flex-1">
-        <div style={{ display: "contents" }}>
+        <div style={{ display: 'contents' }}>
           <div className="transition-margin-top duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]">
             <div className="mb-[12px]">
               <CartHeader />
@@ -92,7 +103,7 @@ export default function Page() {
                                         className="align-bottom border-0"
                                         height={40}
                                         width={40}
-                                        alt={"Product Image"}
+                                        alt={'Product Image'}
                                       />
                                     </picture>
                                     <span className="justify-start flex-[4] items-center flex overflow-hidden text-ellipsis">
@@ -136,7 +147,7 @@ export default function Page() {
               {/**Payment Method */}
               <div className="rounded-[3px] shadow-ssm mb-3">
                 <div className="bg-white mt-5">
-                  <div style={{ display: "contents" }}>
+                  <div style={{ display: 'contents' }}>
                     <div
                       className="items-center box-border flex min-h-[5.625rem] pl-[1.875rem] pr-[1.875rem] border-b-[.0625rem]
                     border-b-[rgba(0,0,0,.05)] pt-[0.625rem] px-6 pb-5 relative"
@@ -150,9 +161,9 @@ export default function Page() {
                         <Elements
                           stripe={stripePromise}
                           options={{
-                            mode: "payment",
+                            mode: 'payment',
                             amount: convertToSubcurrency(subtotal),
-                            currency: "myr",
+                            currency: 'myr',
                           }}
                         >
                           <Checkout
@@ -161,7 +172,7 @@ export default function Page() {
                               productID: item.productID,
                               quantity: item.quantity,
                             }))}
-                            userID={4} //replace with dynamic userID
+                            userID={userId} //replace with dynamic userID
                           />
                         </Elements>
                       </div>

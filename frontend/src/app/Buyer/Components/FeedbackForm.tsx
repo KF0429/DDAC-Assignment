@@ -1,42 +1,87 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+interface Product {
+  productID: number;
+  productName: string;
+}
 
 interface FeedbackFormProps {
   isOpen: boolean;
-  orderId: string | null;
+  orderId: number;
+  product: Product;
   onClose: () => void;
+  onFeedbackSubmitted: (orderId: number, productId: number) => void; // Callback to mark as rated
 }
 
 export default function FeedbackForm({
   isOpen,
   orderId,
+  product,
   onClose,
+  onFeedbackSubmitted,
 }: FeedbackFormProps) {
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
-  const [photos, setPhotos] = useState<File[]>([]);
+  const [userId, setUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (loggedInUser) {
+      const parsedUser = JSON.parse(loggedInUser);
+      setUserId(parsedUser.userId || null);
+    }
+  }, []);
 
   const handleStarClick = (star: number) => {
     setRating(star);
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setPhotos([...photos, ...Array.from(e.target.files)]);
+  const handleSubmit = async () => {
+    if (!userId) {
+      alert('User ID is missing. Please log in again.');
+      return;
     }
-  };
 
-  const handleSubmit = () => {
-    console.log('Feedback submitted for Order:', orderId, {
-      rating,
-      feedback,
-      photos,
-    });
-    onClose();
-    setRating(0);
-    setFeedback('');
-    setPhotos([]);
+    try {
+      const formData = {
+        userID: userId,
+        productID: product.productID,
+        orderID: orderId,
+        rating,
+        commentPhoto: null, // Always null
+        qualityFeedback: feedback,
+        commentDescription: feedback,
+      };
+
+      const response = await fetch('http://localhost:5088/api/Comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Backend error:', errorData);
+        throw new Error(errorData.Message || 'Failed to submit feedback');
+      }
+
+      alert('Feedback submitted successfully!');
+      onFeedbackSubmitted(orderId, product.productID); // Mark this item as rated
+      onClose();
+      setRating(0);
+      setFeedback('');
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      if (error instanceof Error) {
+        alert(`Failed to submit feedback. Reason: ${error.message}`);
+      } else {
+        alert('Failed to submit feedback. Reason: Unknown error.');
+      }
+    }
   };
 
   if (!isOpen) return null;
@@ -45,7 +90,7 @@ export default function FeedbackForm({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-8 w-[500px]">
         <h3 className="text-2xl font-bold mb-6 text-center">
-          Leave Feedback for Order {orderId}
+          Feedback for {product.productName}
         </h3>
 
         {/* Star Rating */}
@@ -78,35 +123,6 @@ export default function FeedbackForm({
           placeholder="Write your feedback here..."
           rows={4}
         />
-
-        {/* Upload Photo */}
-        <div className="mb-6">
-          <label
-            htmlFor="photo-upload"
-            className="bg-gray-200 text-gray-700 py-2 px-4 rounded-md cursor-pointer hover:bg-gray-300"
-          >
-            Upload Photo
-          </label>
-          <input
-            id="photo-upload"
-            type="file"
-            multiple
-            className="hidden"
-            onChange={handlePhotoUpload}
-          />
-        </div>
-
-        {/* Preview Uploaded Photos */}
-        <div className="flex gap-3 mb-6">
-          {photos.map((photo, index) => (
-            <img
-              key={index}
-              src={URL.createObjectURL(photo)}
-              alt={`Uploaded ${index + 1}`}
-              className="w-16 h-16 object-cover rounded-md"
-            />
-          ))}
-        </div>
 
         {/* Submit and Cancel Buttons */}
         <div className="flex justify-between">

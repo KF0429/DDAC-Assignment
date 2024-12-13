@@ -27,7 +27,7 @@ export default function SellerRegister({ userType }: RegisterPageProps) {
 
       if (!response.ok) {
         const error = await response.json();
-        alert(error.Message || 'Error verifying phone number.');
+        alert(error.Message || 'Please Register as Buyer before register as Seller.');
         return;
       }
 

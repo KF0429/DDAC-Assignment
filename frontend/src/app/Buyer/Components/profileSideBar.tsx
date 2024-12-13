@@ -5,28 +5,21 @@ import Link from 'next/link';
 
 interface SidebarProps {
   activeItem: string;
-  profileImage?: string; // Marked as optional
   username?: string; // Marked as optional
 }
 
 export default function ProfileSideBar({
   activeItem,
-  profileImage,
   username,
 }: SidebarProps) {
-  const [showAccountMenu, setShowAccountMenu] = useState(false);
-  const [showPurchaseMenu, setShowPurchaseMenu] = useState(false);
+  const [showAccountMenu, setShowAccountMenu] = useState(true); // Default is open
+  const [showPurchaseMenu, setShowPurchaseMenu] = useState(false); // Default is closed
 
   const accountMenuItems = [
     {
       label: 'Profile',
       id: 'profile',
       href: '/Buyer/MyAccount?page=profile',
-    },
-    {
-      label: 'Banks & Cards',
-      id: 'banks-cards',
-      href: '/Buyer/MyAccount?page=bankAndCard',
     },
     {
       label: 'Address',
@@ -42,19 +35,6 @@ export default function ProfileSideBar({
 
   return (
     <aside className="w-1/4 bg-white rounded-md shadow p-4">
-      {/* Profile Image and Username */}
-      <div className="flex items-center mb-6">
-        <img
-          src={profileImage || '/placeholder-profile.png'}
-          alt="Profile"
-          className="w-12 h-12 rounded-full object-cover mr-4"
-        />
-        <div>
-          <p className="font-semibold">{username || 'Guest'}</p>
-          <p className="text-sm text-blue-500 cursor-pointer">Edit Profile</p>
-        </div>
-      </div>
-
       {/* My Account Section */}
       <div>
         <h2

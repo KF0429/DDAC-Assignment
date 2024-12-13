@@ -5,18 +5,51 @@ import Link from 'next/link';
 
 interface UserDropdownProps {
   username: string;
-  handleLogout: () => void;
 }
 
-const UserDropdown: React.FC<UserDropdownProps> = ({
-  username,
-  handleLogout,
-}) => {
+const UserDropdown: React.FC<UserDropdownProps> = ({ username }) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null); // Correct type for `div` element
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Fetch user profile image
+  useEffect(() => {
+    const getUserId = () => {
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      if (loggedInUser) {
+        const parsedUser = JSON.parse(loggedInUser);
+        return parsedUser.userId || null;
+      }
+      return null;
+    };
+
+    const userId = getUserId();
+    if (userId) {
+      fetch(`http://localhost:5088/api/Users/get-profile/${userId}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch profile');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setProfileImage(data.avatar);
+        })
+        .catch((error) => {
+          console.error('Error fetching profile image:', error);
+        });
+    }
+  }, []);
 
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
+  };
+
+  const handleLogout = () => {
+    // Clear localStorage
+    localStorage.clear();
+    // Optionally redirect to login or homepage
+    window.location.href = '/';
   };
 
   useEffect(() => {
@@ -37,15 +70,23 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
 
   return (
     <div
-      ref={dropdownRef} // Use `div` as the container for the dropdown
-      className="relative cursor-pointer p-0 select-none justify-center flex items-center text-current list-none"
+      ref={dropdownRef}
+      className="relative cursor-pointer p-0 select-none flex items-center text-current list-none"
     >
-      <button
+      <div
+        className="flex items-center gap-2"
         onClick={toggleDropdown}
-        className="text-white text-sm font-medium hover:underline focus:outline-none"
+        aria-hidden="true"
       >
-        {username}
-      </button>
+        {/* Profile Image */}
+        <img
+          src={profileImage || '/placeholder-profile.png'}
+          alt="Profile"
+          className="w-8 h-8 rounded-full object-cover"
+        />
+        {/* Username */}
+        <span className="text-white text-sm font-medium">{username}</span>
+      </div>
       {showDropdown && (
         <div className="absolute top-full mt-2 right-0 bg-white text-black shadow-md rounded-md">
           <Link
